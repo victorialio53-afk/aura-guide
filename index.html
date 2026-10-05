@@ -781,8 +781,8 @@
                 </h2>
 
                 <p>
-                    Кураторы — проводники команды в системе AURA.
-                    Здесь будут собраны 40 профилей: фото, имя и фамилия.
+                    20 кураторских пар уже подключены к системе.
+                    Найди свою команду и открой профиль куратора, чтобы узнать его сильную сторону и сообщение для вас.
                 </p>
 
             </section>
@@ -791,8 +791,8 @@
             <section class="curators-status-panel">
 
                 <span>DATABASE</span>
-                <strong>40 PROFILES</strong>
-                <small>DATA / READY FOR IMPORT</small>
+                <strong>39 / 40 ONLINE</strong>
+                <small>20 TEAMS // 1 PROFILE PENDING</small>
 
             </section>
 
@@ -800,15 +800,77 @@
             <section
                 class="curators-grid"
                 id="curators-grid"
+                aria-live="polite"
+            ></section>
+
+
+            <div
+                class="curator-modal"
+                id="curator-modal"
+                aria-hidden="true"
             >
+                <button
+                    class="curator-modal-backdrop"
+                    id="curator-modal-backdrop"
+                    type="button"
+                    aria-label="Закрыть профиль"
+                ></button>
 
-                <div class="curators-empty">
-                    <span>CURATOR DATA PACKAGE</span>
-                    <strong>ОЖИДАЕТ ЗАГРУЗКИ</strong>
-                    <p>Карточки появятся здесь после добавления фотографий и списка кураторов.</p>
-                </div>
+                <article
+                    class="curator-profile-panel"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="curator-modal-name"
+                >
+                    <button
+                        class="curator-modal-close"
+                        id="curator-modal-close"
+                        type="button"
+                        aria-label="Закрыть"
+                    >
+                        ×
+                    </button>
 
-            </section>
+                    <div class="curator-profile-visual">
+                        <div class="curator-profile-code" id="curator-modal-code">
+                            TEAM // 00
+                        </div>
+
+                        <div class="curator-profile-photo-wrap" id="curator-modal-photo-wrap">
+                            <img
+                                class="curator-profile-photo"
+                                id="curator-modal-photo"
+                                alt=""
+                            >
+                        </div>
+                    </div>
+
+                    <div class="curator-profile-content">
+
+                        <div class="curator-profile-kicker">
+                            CURATOR PROFILE // AURA
+                        </div>
+
+                        <h3 id="curator-modal-name"></h3>
+
+                        <p
+                            class="curator-profile-role"
+                            id="curator-modal-role"
+                        ></p>
+
+                        <div class="curator-profile-block">
+                            <small>СИЛЬНАЯ СТОРОНА</small>
+                            <strong id="curator-modal-strength"></strong>
+                        </div>
+
+                        <div class="curator-profile-block curator-profile-message">
+                            <small>СООБЩЕНИЕ КОМАНДЕ</small>
+                            <p id="curator-modal-message"></p>
+                        </div>
+
+                    </div>
+                </article>
+            </div>
 
 
             <footer>
@@ -818,7 +880,7 @@
                 </span>
 
                 <span>
-                    40 USERS
+                    20 TEAMS
                 </span>
 
             </footer>
