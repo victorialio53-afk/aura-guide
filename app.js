@@ -13,13 +13,13 @@ const typingIndicator =
 
 const auriMessages = [
 
-    "Привет, пользователь. Я помогу тебе пройти путь AURA.",
+    "Дорогой игрок, система AURA приветствует тебя.",
 
-    "Регистрация уже открыта. Сейчас твоя главная задача — подключиться к форуму.",
+    "Авторизация завершена. Ты подключён к миру AURA.",
 
-    "После регистрации система переведёт тебя к этапу формирования команды.",
+    "Задание 1 «Брейншторм» уже доступно. Дедлайн — 11 октября, 23:59.",
 
-    "Задания и расписание появятся здесь, когда система откроет доступ.",
+    "В разделе «Кураторы» скоро появятся профили всех 40 проводников системы.",
 
     "Ты можешь открыть мою 3D-модель и рассмотреть меня поближе."
 
@@ -128,6 +128,12 @@ const gameScreen =
     );
 
 
+const curatorsScreen =
+    document.getElementById(
+        "curators-screen"
+    );
+
+
 const openChecklistButton =
     document.getElementById(
         "open-checklist"
@@ -143,6 +149,18 @@ const backFromChecklistButton =
 const openGameButton =
     document.getElementById(
         "open-game"
+    );
+
+
+const openCuratorsButton =
+    document.getElementById(
+        "open-curators"
+    );
+
+
+const backFromCuratorsButton =
+    document.getElementById(
+        "back-from-curators"
     );
 
 
@@ -206,6 +224,40 @@ if (openChecklistButton) {
 if (backFromChecklistButton) {
 
     backFromChecklistButton.addEventListener(
+        "click",
+        () => {
+
+            showScreen(
+                mainScreen
+            );
+
+        }
+    );
+
+}
+
+
+
+if (openCuratorsButton) {
+
+    openCuratorsButton.addEventListener(
+        "click",
+        () => {
+
+            showScreen(
+                curatorsScreen
+            );
+
+        }
+    );
+
+}
+
+
+
+if (backFromCuratorsButton) {
+
+    backFromCuratorsButton.addEventListener(
         "click",
         () => {
 
