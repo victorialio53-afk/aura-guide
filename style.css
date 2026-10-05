@@ -2654,102 +2654,1022 @@ footer {
     padding-top: 28px;
 }
 
+
 .curators-header h2 {
     margin-top: 8px;
-    font-size: clamp(44px, 10vw, 64px);
+
+    font-size:
+        clamp(
+            44px,
+            10vw,
+            64px
+        );
+
     line-height: 0.92;
-    letter-spacing: -0.05em;
+
+    letter-spacing:
+        -0.05em;
+
     font-weight: 600;
 }
 
+
 .curators-header p {
-    max-width: 500px;
+    max-width: 520px;
+
     margin-top: 22px;
-    color: var(--muted);
+
+    color:
+        var(--muted);
+
     font-size: 14px;
-    line-height: 1.55;
+
+    line-height: 1.6;
 }
+
 
 .curators-status-panel {
     display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 8px 18px;
-    margin-top: 28px;
-    padding: 16px;
-    border: 1px solid rgba(108, 58, 199, 0.32);
-    background: rgba(108, 58, 199, 0.05);
+
+    grid-template-columns:
+        1fr auto;
+
+    gap:
+        8px 18px;
+
+    margin-top:
+        28px;
+
+    padding:
+        16px;
+
+    border:
+        1px solid
+        rgba(108, 58, 199, 0.32);
+
+    background:
+        rgba(108, 58, 199, 0.05);
 }
+
 
 .curators-status-panel span,
 .curators-status-panel small {
-    color: var(--muted);
-    font-size: 9px;
-    letter-spacing: 0.15em;
+    color:
+        var(--muted);
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        0.15em;
 }
+
 
 .curators-status-panel strong {
-    color: var(--accent);
-    font-size: 12px;
-    letter-spacing: 0.12em;
+    color:
+        var(--accent);
+
+    font-size:
+        12px;
+
+    letter-spacing:
+        0.12em;
 }
+
 
 .curators-status-panel small {
-    grid-column: 1 / -1;
+    grid-column:
+        1 / -1;
 }
+
 
 .curators-grid {
-    margin-top: 22px;
-    min-height: 320px;
+    display: grid;
+
+    gap:
+        18px;
+
+    margin-top:
+        24px;
+
+    padding-bottom:
+        26px;
 }
 
-.curators-empty {
-    min-height: 260px;
+
+.curator-pair {
+    position: relative;
+
+    padding:
+        16px;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        rgba(255,255,255,0.10);
+
+    border-radius:
+        24px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(108,58,199,0.12),
+            rgba(255,255,255,0.018) 55%,
+            rgba(108,58,199,0.035)
+        );
+}
+
+
+.curator-pair::before {
+    content: "";
+
+    position: absolute;
+
+    top:
+        -80px;
+
+    right:
+        -80px;
+
+    width:
+        180px;
+
+    height:
+        180px;
+
+    border-radius:
+        50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(108,58,199,0.20),
+            transparent 70%
+        );
+
+    pointer-events:
+        none;
+}
+
+
+.curator-pair-head {
+    position: relative;
+
+    z-index: 1;
+
     display: flex;
-    flex-direction: column;
+
     align-items: center;
-    justify-content: center;
-    padding: 28px;
-    border: 1px dashed rgba(255,255,255,0.12);
-    text-align: center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        12px;
+
+    margin-bottom:
+        14px;
+
+    padding-bottom:
+        11px;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,0.08);
 }
 
-.curators-empty span {
-    color: var(--accent);
-    font-size: 9px;
-    letter-spacing: 0.17em;
+
+.curator-pair-head span {
+    color:
+        var(--accent);
+
+    font-size:
+        10px;
+
+    letter-spacing:
+        0.18em;
 }
 
-.curators-empty strong {
-    margin-top: 10px;
-    color: var(--text);
-    font-size: 20px;
+
+.curator-pair-head small {
+    color:
+        var(--dark-muted);
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        0.15em;
 }
 
-.curators-empty p {
-    max-width: 360px;
-    margin-top: 12px;
-    color: var(--muted);
-    font-size: 12px;
-    line-height: 1.55;
+
+.curator-pair-members {
+    position: relative;
+
+    z-index: 1;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap:
+        12px;
 }
+
+
+.curator-card {
+    position: relative;
+
+    display: flex;
+
+    min-width:
+        0;
+
+    flex-direction:
+        column;
+
+    overflow: hidden;
+
+    padding:
+        0;
+
+    border:
+        1px solid
+        rgba(255,255,255,0.09);
+
+    border-radius:
+        19px;
+
+    background:
+        rgba(8,8,10,0.72);
+
+    color:
+        var(--text);
+
+    text-align:
+        left;
+
+    cursor: pointer;
+
+    appearance: none;
+
+    transition:
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        background 0.18s ease;
+}
+
+
+.curator-card:active {
+    transform:
+        scale(0.985);
+}
+
+
+.curator-card:not(.pending):hover {
+    border-color:
+        rgba(108,58,199,0.55);
+
+    background:
+        rgba(108,58,199,0.08);
+}
+
+
+.curator-card-photo {
+    position: relative;
+
+    height:
+        180px;
+
+    overflow:
+        hidden;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(108,58,199,0.08),
+            rgba(255,255,255,0.018)
+        );
+}
+
+
+.curator-card-photo::after {
+    content: "";
+
+    position: absolute;
+
+    inset:
+        auto 0 0;
+
+    height:
+        42%;
+
+    background:
+        linear-gradient(
+            transparent,
+            rgba(8,8,10,0.88)
+        );
+
+    pointer-events:
+        none;
+}
+
+
+.curator-card-photo img {
+    display: block;
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit:
+        contain;
+
+    object-position:
+        center bottom;
+
+    filter:
+        drop-shadow(
+            0 13px 24px
+            rgba(0,0,0,0.28)
+        );
+}
+
+
+.curator-card-body {
+    display: flex;
+
+    min-height:
+        92px;
+
+    flex-direction:
+        column;
+
+    justify-content:
+        space-between;
+
+    gap:
+        10px;
+
+    padding:
+        12px;
+}
+
+
+.curator-card-index {
+    color:
+        var(--accent);
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        0.16em;
+}
+
+
+.curator-card-name {
+    font-size:
+        16px;
+
+    line-height:
+        1.05;
+
+    letter-spacing:
+        -0.025em;
+
+    font-weight:
+        600;
+
+    overflow-wrap:
+        anywhere;
+}
+
+
+.curator-card-open {
+    display: flex;
+
+    align-items: center;
+
+    justify-content:
+        space-between;
+
+    color:
+        var(--muted);
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        0.14em;
+}
+
+
+.curator-card-open b {
+    color:
+        var(--accent);
+
+    font-size:
+        14px;
+
+    font-weight:
+        400;
+}
+
+
+.curator-card.pending {
+    cursor:
+        default;
+
+    border-style:
+        dashed;
+}
+
+
+.curator-card.pending .curator-card-photo {
+    display: grid;
+
+    place-items:
+        center;
+
+    background:
+        repeating-linear-gradient(
+            135deg,
+            rgba(108,58,199,0.055) 0 8px,
+            transparent 8px 16px
+        );
+}
+
+
+.curator-placeholder {
+    display: grid;
+
+    width:
+        82px;
+
+    height:
+        104px;
+
+    place-items:
+        center;
+
+    border:
+        1px solid
+        rgba(108,58,199,0.35);
+
+    color:
+        var(--accent);
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        0.14em;
+
+    text-align:
+        center;
+}
+
+
+.curator-card.pending .curator-card-open {
+    color:
+        var(--dark-muted);
+}
+
 
 .curators-module em {
     display: block;
 }
 
+
+
+/* ------------------------- */
+/* CURATOR PROFILE MODAL */
+/* ------------------------- */
+
+.curator-modal {
+    position: fixed;
+
+    z-index:
+        100;
+
+    inset: 0;
+
+    display: none;
+
+    align-items:
+        flex-end;
+
+    justify-content:
+        center;
+
+    padding:
+        18px;
+
+    overscroll-behavior:
+        contain;
+}
+
+
+.curator-modal.open {
+    display: flex;
+}
+
+
+.curator-modal-backdrop {
+    position: absolute;
+
+    inset: 0;
+
+    border: 0;
+
+    background:
+        rgba(0,0,0,0.78);
+
+    backdrop-filter:
+        blur(10px);
+
+    cursor: pointer;
+}
+
+
+.curator-profile-panel {
+    position: relative;
+
+    z-index:
+        2;
+
+    width:
+        min(100%, 600px);
+
+    max-height:
+        calc(100vh - 36px);
+
+    overflow-y:
+        auto;
+
+    border:
+        1px solid
+        rgba(108,58,199,0.48);
+
+    border-radius:
+        28px 28px 18px 18px;
+
+    background:
+        #0d0d10;
+
+    box-shadow:
+        0 26px 90px
+        rgba(0,0,0,0.58);
+
+    animation:
+        curator-panel-in
+        0.24s ease;
+}
+
+
+@keyframes curator-panel-in {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(18px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+
+}
+
+
+.curator-modal-close {
+    position: absolute;
+
+    z-index:
+        4;
+
+    top:
+        13px;
+
+    right:
+        13px;
+
+    width:
+        38px;
+
+    height:
+        38px;
+
+    border:
+        1px solid
+        rgba(255,255,255,0.13);
+
+    border-radius:
+        50%;
+
+    background:
+        rgba(8,8,10,0.78);
+
+    color:
+        var(--text);
+
+    font-size:
+        25px;
+
+    line-height:
+        1;
+
+    cursor:
+        pointer;
+}
+
+
+.curator-profile-visual {
+    position: relative;
+
+    min-height:
+        330px;
+
+    overflow: hidden;
+
+    border-radius:
+        28px 28px 0 0;
+
+    background:
+        linear-gradient(
+            155deg,
+            rgba(108,58,199,0.22),
+            rgba(255,255,255,0.015) 56%
+        );
+}
+
+
+.curator-profile-visual::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            rgba(255,255,255,0.025) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,0.025) 1px,
+            transparent 1px
+        );
+
+    background-size:
+        28px 28px;
+
+    opacity:
+        0.48;
+
+    pointer-events:
+        none;
+}
+
+
+.curator-profile-visual::after {
+    content: "";
+
+    position: absolute;
+
+    inset:
+        auto 0 0;
+
+    height:
+        40%;
+
+    background:
+        linear-gradient(
+            transparent,
+            #0d0d10
+        );
+
+    pointer-events:
+        none;
+}
+
+
+.curator-profile-code {
+    position: absolute;
+
+    z-index:
+        3;
+
+    top:
+        18px;
+
+    left:
+        18px;
+
+    color:
+        var(--accent);
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        0.16em;
+}
+
+
+.curator-profile-photo-wrap {
+    position: absolute;
+
+    inset:
+        24px 24px 0;
+
+    display: flex;
+
+    align-items:
+        flex-end;
+
+    justify-content:
+        center;
+}
+
+
+.curator-profile-photo {
+    display: block;
+
+    width:
+        auto;
+
+    max-width:
+        100%;
+
+    height:
+        100%;
+
+    max-height:
+        310px;
+
+    object-fit:
+        contain;
+
+    object-position:
+        center bottom;
+
+    filter:
+        drop-shadow(
+            0 20px 34px
+            rgba(0,0,0,0.28)
+        );
+}
+
+
+.curator-profile-content {
+    position: relative;
+
+    z-index:
+        3;
+
+    margin-top:
+        -18px;
+
+    padding:
+        0 22px 26px;
+}
+
+
+.curator-profile-kicker {
+    margin-bottom:
+        9px;
+
+    color:
+        var(--accent);
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        0.16em;
+}
+
+
+.curator-profile-content h3 {
+    max-width:
+        500px;
+
+    font-size:
+        clamp(
+            30px,
+            8vw,
+            45px
+        );
+
+    line-height:
+        0.96;
+
+    letter-spacing:
+        -0.045em;
+
+    font-weight:
+        600;
+}
+
+
+.curator-profile-role {
+    margin-top:
+        18px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        13px;
+
+    line-height:
+        1.5;
+}
+
+
+.curator-profile-block {
+    margin-top:
+        18px;
+
+    padding:
+        16px;
+
+    border:
+        1px solid
+        rgba(255,255,255,0.09);
+
+    border-radius:
+        17px;
+
+    background:
+        rgba(255,255,255,0.018);
+}
+
+
+.curator-profile-block small {
+    display: block;
+
+    margin-bottom:
+        8px;
+
+    color:
+        var(--accent);
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        0.16em;
+}
+
+
+.curator-profile-block strong {
+    font-size:
+        15px;
+
+    line-height:
+        1.35;
+
+    font-weight:
+        500;
+}
+
+
+.curator-profile-message {
+    background:
+        rgba(108,58,199,0.07);
+
+    border-color:
+        rgba(108,58,199,0.28);
+}
+
+
+.curator-profile-message p {
+    font-size:
+        14px;
+
+    line-height:
+        1.55;
+}
+
+
+body.curator-modal-open {
+    overflow:
+        hidden;
+}
+
+
+
 @media (max-width: 520px) {
+
     .task-card {
-        padding: 15px;
+        padding:
+            15px;
     }
 
     .task-card h4 {
-        font-size: 22px;
+        font-size:
+            22px;
     }
 
     .curators-status-panel {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            1fr;
     }
+
+    .curator-pair {
+        padding:
+            13px;
+
+        border-radius:
+            20px;
+    }
+
+    .curator-pair-members {
+        gap:
+            9px;
+    }
+
+    .curator-card {
+        border-radius:
+            16px;
+    }
+
+    .curator-card-photo {
+        height:
+            164px;
+    }
+
+    .curator-card-body {
+        min-height:
+            98px;
+
+        padding:
+            11px 10px;
+    }
+
+    .curator-card-name {
+        font-size:
+            15px;
+    }
+
+    .curator-modal {
+        padding:
+            0;
+
+        align-items:
+            flex-end;
+    }
+
+    .curator-profile-panel {
+        width:
+            100%;
+
+        max-height:
+            94vh;
+
+        border-right:
+            0;
+
+        border-bottom:
+            0;
+
+        border-left:
+            0;
+
+        border-radius:
+            26px 26px 0 0;
+    }
+
+    .curator-profile-visual {
+        min-height:
+            310px;
+    }
+
+    .curator-profile-photo {
+        max-height:
+            292px;
+    }
+
+    .curator-profile-content {
+        padding:
+            0 18px
+            calc(26px + env(safe-area-inset-bottom));
+    }
+
 }
+
+
 
 
 /* ========================= */
