@@ -19,7 +19,7 @@ const auriMessages = [
 
     "Задание 1 «Брейншторм» уже доступно. Дедлайн — 11 октября, 23:59.",
 
-    "В разделе «Кураторы» скоро появятся профили всех 40 проводников системы.",
+    "База кураторов подключена. Найди свою команду и открой профиль проводника.",
 
     "Ты можешь открыть мою 3D-модель и рассмотреть меня поближе."
 
@@ -310,6 +310,944 @@ if (backFromGameButton) {
     );
 
 }
+
+
+
+
+/* ================================================== */
+/* CURATOR DATABASE */
+/* ================================================== */
+
+const curatorTeams = [
+    {
+        "team": 1,
+        "curators": [
+            {
+                "slot": 1,
+                "name": "Шакирова Кристина",
+                "role": "Заместитель Председателя СК ВШУ",
+                "strength": "ЭМОЦИОНАЛЬНАЯ",
+                "message": "Йоу, студенчество!",
+                "missing": false,
+                "photo": "assets/curator-shakirova_kristina.webp"
+            },
+            {
+                "slot": 2,
+                "name": "Судьенкова Софья",
+                "role": "Председатель КМК СК ИМЭБ",
+                "strength": "ТВОРИТЬ И СОЗДАВАТЬ",
+                "message": "Вот такой вот форум, собачка.",
+                "missing": false,
+                "photo": "assets/curator-sudenkova_sofya.webp"
+            }
+        ]
+    },
+    {
+        "team": 2,
+        "curators": [
+            {
+                "slot": 1,
+                "name": "Ворфоломеева Виктория",
+                "role": "Председатель СК ИМЭБ Председатель КМК СК ИМЭБ 2025-2026",
+                "strength": "Эм... я весёлая и стараюсь веселить остальных",
+                "message": "Коллеги, делаем!!! #связь #команда #яввасверю",
+                "missing": false,
+                "photo": "assets/curator-vorfolomeeva_viktoriya.webp"
+            },
+            {
+                "slot": 2,
+                "name": "Каракачан Дарья",
+                "role": "и.о Председателя ПСО «Диалог»",
+                "strength": "ОБЪЕДИНЯТЬ ЛЮДЕЙ",
+                "message": "Пусть у каждого из вас останется от студенчества не только диплом, но и целая коллекция историй, людей и моментов, которыми захочется поделиться",
+                "missing": false,
+                "photo": "assets/curator-karakachan_darya.webp"
+            }
+        ]
+    },
+    {
+        "team": 3,
+        "curators": [
+            {
+                "slot": 1,
+                "name": "Цеплакова Мария",
+                "role": "Председатель СК ФФ",
+                "strength": "Находить общий язык со всеми, поддерживать свою команду",
+                "message": "Студенчество — лучшее время для реализации своих идей, используйте все возможности по-максимуму! А мы вам поможем и поддержим!)",
+                "missing": false,
+                "photo": "assets/curator-tseplakova_mariya.webp"
+            },
+            {
+                "slot": 2,
+                "name": "Эстебан Гутьеррес",
+                "role": "Президент Ассоциации студетов из Стран Латинской Америки и карибского басейна (2025-2026)",
+                "strength": "Помогать и решать проблемы",
+                "message": "Не упустите возможности, которые вы сами сделали возможными!",
+                "missing": false,
+                "photo": "assets/curator-esteban_josue_gutierrez_benavides.webp"
+            }
+        ]
+    },
+    {
+        "team": 4,
+        "curators": [
+            {
+                "slot": 1,
+                "name": "Ларионов Артём",
+                "role": "Председатель ККО ОСО РУДН",
+                "strength": "Слышать студентов",
+                "message": "Если делаем - то делаем качественно)",
+                "missing": false,
+                "photo": "assets/curator-larionov_artyom.webp"
+            },
+            {
+                "slot": 2,
+                "name": "Захарова Мария",
+                "role": "Председатель СК ИА",
+                "strength": "СЛУШАТЬ, СЛЫШАТЬ И ПОНИМАТЬ",
+                "message": "Ребят, ну короче, вас там ждет что-то прикольное, нишевое и тд...",
+                "missing": false,
+                "photo": "assets/curator-zakharova_mariya.webp"
+            }
+        ]
+    },
+    {
+        "team": 5,
+        "curators": [
+            {
+                "slot": 1,
+                "name": "Курбонмамадов Нируф",
+                "role": "Председатель СК ВШУ",
+                "strength": "ОБЪЕДИНЯТЬ ЛЮДЕЙ",
+                "message": "Братва, будьте собой, мы дадим вам суперскую возможность раскрыться и двигать свои проекты на масштабный уровень.",
+                "missing": false,
+                "photo": "assets/curator-kurbonmamadov_niruf.webp"
+            },
+            {
+                "slot": 2,
+                "name": "Губа Василина",
+                "role": "и.о Председателя СК ЭФ Ответственный секретарь ОСО",
+                "strength": "УМЕЮ ПОДСТРАИВАТЬСЯ ПОД ЛЮБУЮ КОМАНДУ",
+                "message": "Всё будет круто! Делайте, легенды!",
+                "missing": false,
+                "photo": "assets/curator-guba_vasilina.webp"
+            }
+        ]
+    },
+    {
+        "team": 6,
+        "curators": [
+            {
+                "slot": 1,
+                "name": "Милёхин Андрей",
+                "role": "Председатель СК ФГСН",
+                "strength": "НАХОДЧИВОСТЬ И СПРАВЕДЛИВОСТЬ",
+                "message": "Я люблю РУДН! Уверен, вы тоже полюбите.",
+                "missing": false,
+                "photo": "assets/curator-milyokhin_andrey.webp"
+            },
+            {
+                "slot": 2,
+                "name": "Салчак Айжен",
+                "role": "Заместитель Председателя СК ЭФ",
+                "strength": "ЗАВОЗ",
+                "message": "Упасть, отжаться!",
+                "missing": false,
+                "photo": "assets/curator-salchak_aizhen.webp"
+            }
+        ]
+    },
+    {
+        "team": 7,
+        "curators": [
+            {
+                "slot": 1,
+                "name": "Манукян Захар",
+                "role": "Председатель СК ФФМиЕН",
+                "strength": "ВАЙБИТЬ",
+                "message": "Мне вас жаль / вы уже знаете",
+                "missing": false,
+                "photo": "assets/curator-manukyan_zakhar.webp"
+            },
+            {
+                "slot": 2,
+                "name": "Бурцева Лилия",
+                "role": "Экс-председатель КМК СК ЮИ",
+                "strength": "Заряжать позитивом и видеть лучшее",
+                "message": "Студактив — это возможность найти себя и друзей. Действуйте!",
+                "missing": false,
+                "photo": "assets/curator-burtseva_liliya.webp"
+            }
+        ]
+    },
+    {
+        "team": 8,
+        "curators": [
+            {
+                "slot": 1,
+                "name": "Сидорова Арина",
+                "role": "Председатель КМК СК ФФМиЕН",
+                "strength": "ДОБРЯК",
+                "message": "Газ вместе ловить общий вайб!",
+                "missing": false,
+                "photo": "assets/curator-sidorova_arina.webp"
+            },
+            {
+                "slot": 2,
+                "name": "Василиади Полина",
+                "role": "Педседатель КРИС СК АТИ и.о Председателя КРИС ОСО",
+                "strength": "ДРУЖЕЛЮБИЕ",
+                "message": "Каждый из вас маленькая звездочка, которая должна засиять. Здесь точно найдешь своë созвездие единомышленников!",
+                "missing": false,
+                "photo": "assets/curator-vasiliadi_polina.webp"
+            }
+        ]
+    },
+    {
+        "team": 9,
+        "curators": [
+            {
+                "slot": 1,
+                "name": "Мбайндолум Фиделе",
+                "role": "",
+                "strength": "",
+                "message": "",
+                "missing": true,
+                "photo": null
+            },
+            {
+                "slot": 2,
+                "name": "Ефанова Дарья",
+                "role": "Руководитель ВО “OHANA”",
+                "strength": "ПОНИМАТЬ КАЖДОГО С ПОЛУСЛОВА",
+                "message": "Будьте собой, а Студсовет будет рядом, чтобы поддержать!",
+                "missing": false,
+                "photo": "assets/curator-efanova_darya.webp"
+            }
+        ]
+    },
+    {
+        "team": 10,
+        "curators": [
+            {
+                "slot": 1,
+                "name": "Деев Дмитрий",
+                "role": "Председатель Студенческой Киберспортивной Организации «GOPLIT»",
+                "strength": "Создаём будущее студенчества",
+                "message": "Здесь можно найти друзей и единомышленников среди тех, кто горит общим делом. Тут ты точно не останешься в стороне)",
+                "missing": false,
+                "photo": "assets/curator-deev_dmitriy.webp"
+            },
+            {
+                "slot": 2,
+                "name": "Ушмадеева Анастасия",
+                "role": "Главный редактор «В курсе media RUDN»",
+                "strength": "СОЗДАВАТЬ ПЛЮС ВАЙБ",
+                "message": "Не бойтесь раскрываться, ведь Студенческий совет — пространство для вашего же развития!",
+                "missing": false,
+                "photo": "assets/curator-ushmadeeva_anastasiya.webp"
+            }
+        ]
+    },
+    {
+        "team": 11,
+        "curators": [
+            {
+                "slot": 1,
+                "name": "Пуняева Варвара",
+                "role": "и.о Председателя КСО ОСО",
+                "strength": "ЭМПАТИЯ",
+                "message": "Делай как по кайфу!",
+                "missing": false,
+                "photo": "assets/curator-punyaeva_varvara.webp"
+            },
+            {
+                "slot": 2,
+                "name": "Гуреев Василий",
+                "role": "Заместитель Председателся КСВО СК АТИ",
+                "strength": "ГРОМКИЙ ГОЛОС",
+                "message": "Кто громче кричит, тот и прав, но это не точно...",
+                "missing": false,
+                "photo": "assets/curator-gureev_vasiliy.webp"
+            }
+        ]
+    },
+    {
+        "team": 12,
+        "curators": [
+            {
+                "slot": 1,
+                "name": "Чудакова Александра",
+                "role": "Основатель студенческого  интернет-издания «В курсе media RUDN», наставник главного редактора издания",
+                "strength": "ОБЪЕДИНЯТЬ ЛЮДЕЙ И ПРИКАЛЫВАТЬ ПРИКОЛЫ",
+                "message": "Студсовет — это только начало вашего большого пути, поэтому сияйте и делайте то, что нравится!",
+                "missing": false,
+                "photo": "assets/curator-chudakova_aleksandra.webp"
+            },
+            {
+                "slot": 2,
+                "name": "Белашева Маргарита",
+                "role": "Заместитель Председателя СК ИВЭБиТД",
+                "strength": "Поддержание комфорта в коллективе. /Связь",
+                "message": "Погнали фармить ауру вместе!",
+                "missing": false,
+                "photo": "assets/curator-belasheva_margarita.webp"
+            }
+        ]
+    },
+    {
+        "team": 13,
+        "curators": [
+            {
+                "slot": 1,
+                "name": "Трущук Анастасия",
+                "role": "Руководитель Менторского центра «ProMentor RUDN» 2024-2025 Руководитель PR-сектора «ProMentor RUDN» 2023-2024 Заместитель Председателя КСО ОСО 2023-2024",
+                "strength": "ЧУВСТВОВАТЬ И НАПРАВЛЯТЬ",
+                "message": "Цени студенчество, это самое уникальное время в жизни.",
+                "missing": false,
+                "photo": "assets/curator-trushchuk_anastasiya.webp"
+            },
+            {
+                "slot": 2,
+                "name": "Казанцева Екатерина",
+                "role": "Ответственный секретарь СК ЭФ",
+                "strength": "Заряжаю людей на работу",
+                "message": "Чтобы не нарушать правила, придумайте их сами.",
+                "missing": false,
+                "photo": "assets/curator-kazantseva_ekaterina.webp"
+            }
+        ]
+    },
+    {
+        "team": 14,
+        "curators": [
+            {
+                "slot": 1,
+                "name": "Фаткуллина Дарина",
+                "role": "Заместитель председателя Женского комитета РУДН",
+                "strength": "Слышать каждого",
+                "message": "Совсем скоро ты поймёшь, как круто быть активистом. Осторожно, это затягивает",
+                "missing": false,
+                "photo": "assets/curator-fatkullina_darina.webp"
+            },
+            {
+                "slot": 2,
+                "name": "Данилкина Вася",
+                "role": "Председатель КСО ИМЭБ",
+                "strength": "треки мэдкида",
+                "message": "wake up, вы ауры оппозиция",
+                "missing": false,
+                "photo": "assets/curator-danilkina_vasilisa.webp"
+            }
+        ]
+    },
+    {
+        "team": 15,
+        "curators": [
+            {
+                "slot": 1,
+                "name": "Самороковский Даниил",
+                "role": "Заместитель председателя КМК СК ЭФ Студент года премии GoldenBrick",
+                "strength": "Верить в своих",
+                "message": "Нам всем нужно завайбиться",
+                "missing": false,
+                "photo": "assets/curator-samorokovskiy_daniil.webp"
+            },
+            {
+                "slot": 2,
+                "name": "Наркулова Виктория",
+                "role": "Председатель СК ИРЯ",
+                "strength": "Быть заинтересованным в каждом",
+                "message": "Ищите себя, но не теряйте по пути",
+                "missing": false,
+                "photo": "assets/curator-narkulova_viktoriya.webp"
+            }
+        ]
+    },
+    {
+        "team": 16,
+        "curators": [
+            {
+                "slot": 1,
+                "name": "Ностаев Мерген",
+                "role": "Президент землячества Республики Калмыкия в РУДН Заместитель председателя КМК СК ВШУ",
+                "strength": "Найду язык с любым человеком",
+                "message": "Фарми ауру. Студенчество ждёт тебя)",
+                "missing": false,
+                "photo": "assets/curator-nostaev_mergen.webp"
+            },
+            {
+                "slot": 2,
+                "name": "Ворокова Надежда",
+                "role": "Глава Инклюзивного отдела «Connect» Председатель СК ИА 2025-2026",
+                "strength": "Слышать каждого и находить подход",
+                "message": "Не нужно быть идеальным — нужно быть настоящим. Остальному научимся по пути",
+                "missing": false,
+                "photo": "assets/curator-vorokova_nadezhda.webp"
+            }
+        ]
+    },
+    {
+        "team": 17,
+        "curators": [
+            {
+                "slot": 1,
+                "name": "Мутаев Муртазаали",
+                "role": "Руководитель отдела креаторов студенческого интернет-издания «В курсе media RUDN»",
+                "strength": "Бородатый, дружелюбный",
+                "message": "Студенчество - лучшее время для проб и ошибок, так что пробуйте и ошибайтесь",
+                "missing": false,
+                "photo": "assets/curator-mutaev_murtuz.webp"
+            },
+            {
+                "slot": 2,
+                "name": "Шмитько Юлия",
+                "role": "Председатель СК ИЭ",
+                "strength": "Быть опорой для студентов",
+                "message": "Лучше сделать и пожалеть, чем пожалеть о том, что не сделал. Поэтому — действуйте!",
+                "missing": false,
+                "photo": "assets/curator-shmitko_yuliya.webp"
+            }
+        ]
+    },
+    {
+        "team": 18,
+        "curators": [
+            {
+                "slot": 1,
+                "name": "Дорофеева Полина",
+                "role": "Председатель СК ИМЭБ 2024-2025 Руководитель НСВО 2023-2024",
+                "strength": "Принятие",
+                "message": "Коллеги, дерзайте! Не бойтесь высказываться, вам это пригодится в будущем",
+                "missing": false,
+                "photo": "assets/curator-dorofeeva_polina.webp"
+            },
+            {
+                "slot": 2,
+                "name": "Вирабян Нина",
+                "role": "Председатель СК ЮИ Председатель КСО СК ЮИ 2025-2026",
+                "strength": "могаю",
+                "message": "Без повода не беспокойте, с поводом тоже",
+                "missing": false,
+                "photo": "assets/curator-virabyan_nina.webp"
+            }
+        ]
+    },
+    {
+        "team": 19,
+        "curators": [
+            {
+                "slot": 1,
+                "name": "Кадухин Алексей",
+                "role": "Заместитель председателя СК ИИЯ",
+                "strength": "Всегда отстаиваю своих",
+                "message": "Зачильтесь, это студактив, а не работа.",
+                "missing": false,
+                "photo": "assets/curator-kadukhin_aleksey.webp"
+            },
+            {
+                "slot": 2,
+                "name": "Бабешко Юлия",
+                "role": "Заместитель по внутренней деятельности Проектного офиса ОСО",
+                "strength": "Быстро много думаю",
+                "message": "Вы реально всё можете, хотите верьте, хотите нет.",
+                "missing": false,
+                "photo": "assets/curator-babeshko_yuliya.webp"
+            }
+        ]
+    },
+    {
+        "team": 20,
+        "curators": [
+            {
+                "slot": 1,
+                "name": "Клименко Алёна",
+                "role": "Экс-председатель КСВО СК ФФМиЕН",
+                "strength": "Объединять и поддерживать",
+                "message": "Не бойся пробовать!",
+                "missing": false,
+                "photo": "assets/curator-klimenko_alena.webp"
+            },
+            {
+                "slot": 2,
+                "name": "Тарарышкина Ксения",
+                "role": "Председатель ККО СК ИИЯ",
+                "strength": "Желание помочь всем и вся",
+                "message": "Не бойтесь показаться странным",
+                "missing": false,
+                "photo": "assets/curator-tararyshkina_kseniya.webp"
+            }
+        ]
+    }
+];
+
+
+const curatorsGrid =
+    document.getElementById(
+        "curators-grid"
+    );
+
+
+const curatorModal =
+    document.getElementById(
+        "curator-modal"
+    );
+
+
+const curatorModalBackdrop =
+    document.getElementById(
+        "curator-modal-backdrop"
+    );
+
+
+const curatorModalClose =
+    document.getElementById(
+        "curator-modal-close"
+    );
+
+
+const curatorModalCode =
+    document.getElementById(
+        "curator-modal-code"
+    );
+
+
+const curatorModalPhoto =
+    document.getElementById(
+        "curator-modal-photo"
+    );
+
+
+const curatorModalPhotoWrap =
+    document.getElementById(
+        "curator-modal-photo-wrap"
+    );
+
+
+const curatorModalName =
+    document.getElementById(
+        "curator-modal-name"
+    );
+
+
+const curatorModalRole =
+    document.getElementById(
+        "curator-modal-role"
+    );
+
+
+const curatorModalStrength =
+    document.getElementById(
+        "curator-modal-strength"
+    );
+
+
+const curatorModalMessage =
+    document.getElementById(
+        "curator-modal-message"
+    );
+
+
+
+function padTeamNumber(
+    number
+) {
+
+    return String(
+        number
+    ).padStart(
+        2,
+        "0"
+    );
+
+}
+
+
+
+function curatorCardMarkup(
+    curator,
+    teamNumber
+) {
+
+    const teamCode =
+        padTeamNumber(
+            teamNumber
+        );
+
+
+    if (
+        curator.missing
+    ) {
+
+        return `
+
+            <article class="curator-card pending">
+
+                <div class="curator-card-photo">
+
+                    <div class="curator-placeholder">
+                        PROFILE<br>
+                        PENDING
+                    </div>
+
+                </div>
+
+                <div class="curator-card-body">
+
+                    <span class="curator-card-index">
+                        TEAM ${teamCode} // CURATOR ${curator.slot}
+                    </span>
+
+                    <strong class="curator-card-name">
+                        ${curator.name}
+                    </strong>
+
+                    <span class="curator-card-open">
+                        DATA NOT RECEIVED
+                    </span>
+
+                </div>
+
+            </article>
+
+        `;
+
+    }
+
+
+    return `
+
+        <button
+            class="curator-card"
+            type="button"
+            data-team="${teamNumber}"
+            data-slot="${curator.slot}"
+        >
+
+            <div class="curator-card-photo">
+
+                <img
+                    src="${curator.photo}"
+                    alt="${curator.name}"
+                    loading="lazy"
+                    decoding="async"
+                >
+
+            </div>
+
+            <div class="curator-card-body">
+
+                <span class="curator-card-index">
+                    TEAM ${teamCode} // CURATOR ${curator.slot}
+                </span>
+
+                <strong class="curator-card-name">
+                    ${curator.name}
+                </strong>
+
+                <span class="curator-card-open">
+                    OPEN PROFILE
+                    <b>↗</b>
+                </span>
+
+            </div>
+
+        </button>
+
+    `;
+
+}
+
+
+
+function renderCurators() {
+
+    if (
+        !curatorsGrid
+    ) {
+        return;
+    }
+
+
+    curatorsGrid.innerHTML =
+        curatorTeams
+            .map(
+                (team) => {
+
+                    const teamCode =
+                        padTeamNumber(
+                            team.team
+                        );
+
+
+                    const members =
+                        team.curators
+                            .map(
+                                (curator) =>
+                                    curatorCardMarkup(
+                                        curator,
+                                        team.team
+                                    )
+                            )
+                            .join(
+                                ""
+                            );
+
+
+                    return `
+
+                        <article class="curator-pair">
+
+                            <div class="curator-pair-head">
+
+                                <span>
+                                    TEAM // ${teamCode}
+                                </span>
+
+                                <small>
+                                    CURATOR PAIR
+                                </small>
+
+                            </div>
+
+                            <div class="curator-pair-members">
+                                ${members}
+                            </div>
+
+                        </article>
+
+                    `;
+
+                }
+            )
+            .join(
+                ""
+            );
+
+
+    curatorsGrid
+        .querySelectorAll(
+            ".curator-card[data-team]"
+        )
+        .forEach(
+            (button) => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        const teamNumber =
+                            Number(
+                                button.dataset.team
+                            );
+
+
+                        const slot =
+                            Number(
+                                button.dataset.slot
+                            );
+
+
+                        const team =
+                            curatorTeams.find(
+                                (item) =>
+                                    item.team ===
+                                    teamNumber
+                            );
+
+
+                        const curator =
+                            team
+                                ?.curators
+                                .find(
+                                    (item) =>
+                                        item.slot ===
+                                        slot
+                                );
+
+
+                        if (
+                            curator
+                            &&
+                            !curator.missing
+                        ) {
+
+                            openCuratorProfile(
+                                curator,
+                                teamNumber
+                            );
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+}
+
+
+
+function openCuratorProfile(
+    curator,
+    teamNumber
+) {
+
+    if (
+        !curatorModal
+    ) {
+        return;
+    }
+
+
+    curatorModalCode.textContent =
+        `TEAM // ${padTeamNumber(teamNumber)}  ·  CURATOR // ${curator.slot}`;
+
+
+    curatorModalName.textContent =
+        curator.name;
+
+
+    curatorModalRole.textContent =
+        curator.role ||
+        "Должность не указана";
+
+
+    curatorModalStrength.textContent =
+        curator.strength ||
+        "—";
+
+
+    curatorModalMessage.textContent =
+        curator.message ||
+        "—";
+
+
+    if (
+        curator.photo
+    ) {
+
+        curatorModalPhoto.src =
+            curator.photo;
+
+
+        curatorModalPhoto.alt =
+            curator.name;
+
+
+        curatorModalPhotoWrap.style.display =
+            "flex";
+
+    }
+    else {
+
+        curatorModalPhoto.removeAttribute(
+            "src"
+        );
+
+
+        curatorModalPhotoWrap.style.display =
+            "none";
+
+    }
+
+
+    curatorModal.classList.add(
+        "open"
+    );
+
+
+    curatorModal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+
+    document.body.classList.add(
+        "curator-modal-open"
+    );
+
+}
+
+
+
+function closeCuratorProfile() {
+
+    if (
+        !curatorModal
+    ) {
+        return;
+    }
+
+
+    curatorModal.classList.remove(
+        "open"
+    );
+
+
+    curatorModal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+
+    document.body.classList.remove(
+        "curator-modal-open"
+    );
+
+}
+
+
+
+if (
+    curatorModalClose
+) {
+
+    curatorModalClose.addEventListener(
+        "click",
+        closeCuratorProfile
+    );
+
+}
+
+
+
+if (
+    curatorModalBackdrop
+) {
+
+    curatorModalBackdrop.addEventListener(
+        "click",
+        closeCuratorProfile
+    );
+
+}
+
+
+
+document.addEventListener(
+    "keydown",
+    (event) => {
+
+        if (
+            event.key === "Escape"
+            &&
+            curatorModal?.classList.contains(
+                "open"
+            )
+        ) {
+
+            closeCuratorProfile();
+
+        }
+
+    }
+);
+
+
+
+renderCurators();
 
 
 
