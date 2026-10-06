@@ -348,7 +348,7 @@ const curatorTeams = [
             {
                 "slot": 1,
                 "name": "Ворфоломеева Виктория",
-                "role": "Председатель СК ИМЭБ Председатель КМК СК ИМЭБ 2025-2026",
+                "role": ["Председатель СК ИМЭБ", "Председатель КМК СК ИМЭБ 2025-2026"],
                 "strength": "Эм... я весёлая и стараюсь веселить остальных",
                 "message": "Коллеги, делаем!!! #связь #команда #яввасверю",
                 "missing": false,
@@ -426,7 +426,7 @@ const curatorTeams = [
             {
                 "slot": 2,
                 "name": "Губа Василина",
-                "role": "и.о Председателя СК ЭФ Ответственный секретарь ОСО",
+                "role": ["и.о Председателя СК ЭФ", "Ответственный секретарь ОСО"],
                 "strength": "УМЕЮ ПОДСТРАИВАТЬСЯ ПОД ЛЮБУЮ КОМАНДУ",
                 "message": "Всё будет круто! Делайте, легенды!",
                 "missing": false,
@@ -495,7 +495,7 @@ const curatorTeams = [
             {
                 "slot": 2,
                 "name": "Василиади Полина",
-                "role": "Педседатель КРИС СК АТИ и.о Председателя КРИС ОСО",
+                "role": ["Педседатель КРИС СК АТИ", "и.о Председателя КРИС ОСО"],
                 "strength": "ДРУЖЕЛЮБИЕ",
                 "message": "Каждый из вас маленькая звездочка, которая должна засиять. Здесь точно найдешь своë созвездие единомышленников!",
                 "missing": false,
@@ -601,7 +601,7 @@ const curatorTeams = [
             {
                 "slot": 1,
                 "name": "Трущук Анастасия",
-                "role": "Руководитель Менторского центра «ProMentor RUDN» 2024-2025 Руководитель PR-сектора «ProMentor RUDN» 2023-2024 Заместитель Председателя КСО ОСО 2023-2024",
+                "role": ["Руководитель Менторского центра «ProMentor RUDN» 2024-2025", "Руководитель PR-сектора «ProMentor RUDN» 2023-2024", "Заместитель Председателя КСО ОСО 2023-2024"],
                 "strength": "ЧУВСТВОВАТЬ И НАПРАВЛЯТЬ",
                 "message": "Цени студенчество, это самое уникальное время в жизни.",
                 "missing": false,
@@ -647,7 +647,7 @@ const curatorTeams = [
             {
                 "slot": 1,
                 "name": "Самороковский Даниил",
-                "role": "Заместитель председателя КМК СК ЭФ Студент года премии GoldenBrick",
+                "role": ["Заместитель председателя КМК СК ЭФ", "Студент года премии GoldenBrick"],
                 "strength": "Верить в своих",
                 "message": "Нам всем нужно завайбиться",
                 "missing": false,
@@ -670,7 +670,7 @@ const curatorTeams = [
             {
                 "slot": 1,
                 "name": "Ностаев Мерген",
-                "role": "Президент землячества Республики Калмыкия в РУДН Заместитель председателя КМК СК ВШУ",
+                "role": ["Президент землячества Республики Калмыкия в РУДН", "Заместитель председателя КМК СК ВШУ"],
                 "strength": "Найду язык с любым человеком",
                 "message": "Фарми ауру. Студенчество ждёт тебя)",
                 "missing": false,
@@ -679,7 +679,7 @@ const curatorTeams = [
             {
                 "slot": 2,
                 "name": "Ворокова Надежда",
-                "role": "Глава Инклюзивного отдела «Connect» Председатель СК ИА 2025-2026",
+                "role": ["Глава Инклюзивного отдела «Connect»", "Председатель СК ИА 2025-2026"],
                 "strength": "Слышать каждого и находить подход",
                 "message": "Не нужно быть идеальным — нужно быть настоящим. Остальному научимся по пути",
                 "missing": false,
@@ -716,7 +716,7 @@ const curatorTeams = [
             {
                 "slot": 1,
                 "name": "Дорофеева Полина",
-                "role": "Председатель СК ИМЭБ 2024-2025 Руководитель НСВО 2023-2024",
+                "role": ["Председатель СК ИМЭБ 2024-2025", "Руководитель НСВО 2023-2024"],
                 "strength": "Принятие",
                 "message": "Коллеги, дерзайте! Не бойтесь высказываться, вам это пригодится в будущем",
                 "missing": false,
@@ -725,7 +725,7 @@ const curatorTeams = [
             {
                 "slot": 2,
                 "name": "Вирабян Нина",
-                "role": "Председатель СК ЮИ Председатель КСО СК ЮИ 2025-2026",
+                "role": ["Председатель СК ЮИ", "Председатель КСО СК ЮИ 2025-2026"],
                 "strength": "могаю",
                 "message": "Без повода не беспокойте, с поводом тоже",
                 "missing": false,
@@ -946,8 +946,22 @@ function curatorCardMarkup(
                 </strong>
 
                 <span class="curator-card-open">
-                    OPEN PROFILE
-                    <b>↗</b>
+                    ОТКРЫТЬ ПРОФИЛЬ
+
+                    <svg
+                        class="curator-card-arrow"
+                        viewBox="0 0 16 16"
+                        aria-hidden="true"
+                    >
+                        <path
+                            d="M4 12L12 4M6 4H12V10"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.35"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+                    </svg>
                 </span>
 
             </div>
@@ -1109,14 +1123,41 @@ function openCuratorProfile(
         curator.name;
 
 
-    curatorModalRole.textContent =
-        curator.role ||
-        "Должность не указана";
+    const curatorRoles =
+        Array.isArray(curator.role)
+            ? curator.role
+            : curator.role
+                ? [curator.role]
+                : [];
+
+
+    if (curatorRoles.length) {
+
+        curatorModalRole.innerHTML = `
+            <ul class="curator-profile-roles">
+                ${curatorRoles
+                    .map(
+                        (role) => `
+                            <li>${role}</li>
+                        `
+                    )
+                    .join("")}
+            </ul>
+        `;
+
+    }
+    else {
+
+        curatorModalRole.textContent =
+            "Должность не указана";
+
+    }
 
 
     curatorModalStrength.textContent =
-        curator.strength ||
-        "—";
+        curator.strength
+            ? curator.strength.trim().toUpperCase()
+            : "—";
 
 
     curatorModalMessage.textContent =
