@@ -3932,3 +3932,61 @@ body.curator-modal-open {
     }
 
 }
+
+
+/* =========================
+   CURATOR UI PATCH 06.10
+   ========================= */
+
+.curator-card-arrow {
+    width: 15px;
+    height: 15px;
+    flex: 0 0 15px;
+    color: var(--accent);
+}
+
+.curator-card-open b {
+    display: none;
+}
+
+.curator-profile-roles {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.curator-profile-roles li {
+    position: relative;
+    padding-left: 16px;
+}
+
+.curator-profile-roles li::before {
+    content: "";
+    position: absolute;
+    top: 0.68em;
+    left: 1px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 9px rgba(108,58,199,0.42);
+    transform: translateY(-50%);
+}
+
+.curator-profile-block strong {
+    text-transform: uppercase;
+}
+
+@media (max-width: 650px) {
+    .curator-card-open {
+        gap: 10px;
+    }
+
+    .curator-card-arrow {
+        width: 14px;
+        height: 14px;
+        flex-basis: 14px;
+    }
+}
