@@ -196,21 +196,21 @@
                     <div class="quick-game-copy">
 
                         <small>
-                            QUICK ACCESS // MINI GAME
+                            QUICK ACCESS // AURA
                         </small>
 
                         <strong>
-                            AURI SIGNAL RUN
+                            МИНИ-ИГРА
                         </strong>
 
                         <em>
-                            DODGE / SURVIVE / CONNECT
+                            AURA BLOCKS · СОБИРАЙ ЛИНИИ · СТАВЬ РЕКОРД
                         </em>
 
                     </div>
 
                     <span class="quick-game-play">
-                        PLAY →
+                        ИГРАТЬ →
                     </span>
 
                 </button>
@@ -1114,7 +1114,6 @@
             id="game-screen"
         >
 
-
             <button
                 class="back-button"
                 id="back-from-game"
@@ -1124,161 +1123,161 @@
             </button>
 
 
-
-            <section class="game-header">
+            <section class="blocks-header">
 
                 <div class="section-number">
-                    BONUS MODULE / TEST BUILD
+                    MINI GAME // AURA SYSTEM
                 </div>
 
-
                 <h2>
-                    AURI<br>
-                    SIGNAL RUN
+                    AURA<br>
+                    <span>BLOCKS</span>
                 </h2>
 
-
                 <p>
-                    Уклоняйся от системных помех.
-                    Чем дольше соединение стабильно,
-                    тем выше скорость и твой результат.
+                    Собирай полные строки и столбцы, очищай поле
+                    и ставь новый рекорд. Выбери одну из трёх фигур,
+                    затем нажми на место на поле, куда хочешь её поставить.
                 </p>
 
             </section>
 
 
+            <section class="blocks-panel">
 
-            <section class="game-panel">
-
-
-                <div class="game-hud">
+                <div class="blocks-hud">
 
                     <div>
-                        <small>SCORE</small>
-                        <strong id="game-score">
-                            0000
-                        </strong>
+                        <small>СЧЁТ</small>
+                        <strong id="game-score">0000</strong>
                     </div>
-
 
                     <div>
-                        <small>BEST</small>
-                        <strong id="game-best">
-                            0000
-                        </strong>
+                        <small>РЕКОРД</small>
+                        <strong id="game-best">0000</strong>
                     </div>
 
-
-                    <span class="game-online">
-                        ● SIGNAL
-                    </span>
+                    <div>
+                        <small>COMBO</small>
+                        <strong id="game-combo">x1</strong>
+                    </div>
 
                 </div>
 
 
+                <div class="blocks-system-line">
+                    <span class="blocks-live-dot"></span>
+                    GRID // ONLINE
+                    <b id="blocks-status">ГОТОВО</b>
+                </div>
 
-                <div class="game-stage-wrap">
 
-                    <canvas
-                        id="game-canvas"
-                        aria-label="AURI Signal Run"
-                    ></canvas>
-
+                <div class="blocks-board-shell">
 
                     <div
-                        class="game-overlay"
+                        class="blocks-board"
+                        id="blocks-board"
+                        role="grid"
+                        aria-label="Игровое поле AURA Blocks"
+                    ></div>
+
+                    <div
+                        class="blocks-overlay"
                         id="game-overlay"
                     >
 
                         <div class="game-overlay-code">
-                            AURA.SYSTEM / SIMULATION
+                            AURA.SYSTEM / MINI GAME
                         </div>
 
-
                         <h3 id="game-overlay-title">
-                            READY?
+                            ГОТОВ?
                         </h3>
 
-
                         <p id="game-overlay-text">
-                            Проводи пальцем влево и вправо,
-                            чтобы перемещать AURI между полосами.
+                            Собирай линии, освобождай поле и попробуй
+                            поставить самый высокий рекорд.
                         </p>
-
 
                         <button
                             class="game-start-button"
                             id="game-start"
                             type="button"
                         >
-                            ЗАПУСТИТЬ ТЕСТ
+                            НАЧАТЬ ИГРУ
                         </button>
 
                     </div>
 
+                    <div
+                        class="blocks-toast"
+                        id="blocks-toast"
+                        aria-live="polite"
+                    ></div>
+
+                </div>
+
+
+                <div class="blocks-tray-head">
+                    <span>ДОСТУПНЫЕ ФРАГМЕНТЫ</span>
+                    <small>ВЫБЕРИ ФИГУРУ</small>
+                </div>
+
+                <div
+                    class="blocks-tray"
+                    id="blocks-tray"
+                    aria-label="Доступные фигуры"
+                ></div>
+
+
+                <div class="blocks-help">
+                    <span>01</span>
+                    <p>Нажми на фигуру.</p>
+
+                    <span>02</span>
+                    <p>Нажми на свободное место на поле.</p>
+
+                    <span>03</span>
+                    <p>Полная строка или столбец исчезнет.</p>
                 </div>
 
 
-
-                <div class="game-controls">
-
-                    <button
-                        type="button"
-                        id="game-left"
-                        aria-label="Влево"
-                    >
-                        ←
-                    </button>
-
-
-                    <span>
-                        SWIPE / MOVE
-                    </span>
-
-
-                    <button
-                        type="button"
-                        id="game-right"
-                        aria-label="Вправо"
-                    >
-                        →
-                    </button>
-
-                </div>
+                <button
+                    class="blocks-reset"
+                    id="blocks-reset"
+                    type="button"
+                >
+                    НОВАЯ ИГРА
+                </button>
 
             </section>
 
 
-
-            <div class="game-test-note">
+            <div class="blocks-record-note">
 
                 <span>
-                    TEST VERSION
+                    HIGH SCORE // LOCAL SAVE
                 </span>
 
                 <p>
-                    Это первая механическая версия.
-                    Если сам принцип понравится, сюда добавим
-                    бонусы, DATA FRAGMENTS, комбо, миссии
-                    и разные события системы.
+                    Твой рекорд сохраняется на этом устройстве.
+                    Сделай скрин результата — он ещё может пригодиться.
                 </p>
 
             </div>
 
 
-
             <footer>
 
                 <span>
-                    AURA / SIGNAL RUN
+                    AURA / MINI GAME
                 </span>
 
                 <span>
-                    TEST BUILD
+                    HIGH SCORE MODE
                 </span>
 
             </footer>
-
 
         </section>
 
