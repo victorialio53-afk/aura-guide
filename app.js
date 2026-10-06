@@ -1576,11 +1576,15 @@ const BLOCKS_BEST_KEY = "aura-blocks-best-v1";
 const BLOCK_CLEAR_MS = 430;
 
 const BLOCK_COLORS = [
-    { id: "violet", value: "#9368ff" },
-    { id: "lilac", value: "#c4a9ff" },
-    { id: "indigo", value: "#6259b8" },
-    { id: "ice", value: "#e6e3ee" },
-    { id: "deep", value: "#7b49cf" }
+    // AURA palette: colors are deliberately different enough to read at a glance,
+    // but all stay soft / slightly muted so the field does not turn into a rainbow.
+    { id: "violet", value: "#9368ff" }, // base AURA violet
+    { id: "blue", value: "#6f96e8" },   // pastel system blue
+    { id: "cyan", value: "#71c6c4" },   // soft cyan
+    { id: "gold", value: "#d8c472" },   // muted pastel yellow
+    { id: "lilac", value: "#ba8de2" },  // warm lilac
+    { id: "ice", value: "#d9dde8" },    // cold white
+    { id: "indigo", value: "#6670c8" }  // soft indigo
 ];
 
 let blocksBoard = [];
@@ -1800,7 +1804,21 @@ function newPiece(index) {
 
 
 function generateBlocksPieces() {
-    blocksPieces = [0, 1, 2].map(newPiece);
+    // Give the three available pieces different colors whenever possible.
+    // This makes the palette visible without changing the game mechanics.
+    const colors = [...BLOCK_COLORS];
+
+    for (let i = colors.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [colors[i], colors[j]] = [colors[j], colors[i]];
+    }
+
+    blocksPieces = [0, 1, 2].map((index) => {
+        const piece = newPiece(index);
+        piece.color = colors[index % colors.length];
+        return piece;
+    });
+
     renderBlocksTray();
 }
 
