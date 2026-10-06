@@ -1106,178 +1106,150 @@
 
 
         <!-- ================================================== -->
-        <!-- GAME SCREEN -->
+        <!-- GAME SCREEN / FULLSCREEN MODE -->
         <!-- ================================================== -->
 
         <section
             class="app-screen"
             id="game-screen"
+            aria-label="Мини-игра AURA Blocks"
         >
 
-            <button
-                class="back-button"
-                id="back-from-game"
-                type="button"
-            >
-                ← НАЗАД
-            </button>
+            <div class="blocks-game-shell">
 
+                <header class="blocks-game-topbar">
 
-            <section class="blocks-header">
-
-                <div class="section-number">
-                    MINI GAME // AURA SYSTEM
-                </div>
-
-                <h2>
-                    AURA<br>
-                    <span>BLOCKS</span>
-                </h2>
-
-                <p>
-                    Собирай полные строки и столбцы, очищай поле
-                    и ставь новый рекорд. Выбери одну из трёх фигур,
-                    затем нажми на место на поле, куда хочешь её поставить.
-                </p>
-
-            </section>
-
-
-            <section class="blocks-panel">
-
-                <div class="blocks-hud">
-
-                    <div>
-                        <small>СЧЁТ</small>
-                        <strong id="game-score">0000</strong>
-                    </div>
-
-                    <div>
-                        <small>РЕКОРД</small>
-                        <strong id="game-best">0000</strong>
-                    </div>
-
-                    <div>
-                        <small>COMBO</small>
-                        <strong id="game-combo">x1</strong>
-                    </div>
-
-                </div>
-
-
-                <div class="blocks-system-line">
-                    <span class="blocks-live-dot"></span>
-                    GRID // ONLINE
-                    <b id="blocks-status">ГОТОВО</b>
-                </div>
-
-
-                <div class="blocks-board-shell">
-
-                    <div
-                        class="blocks-board"
-                        id="blocks-board"
-                        role="grid"
-                        aria-label="Игровое поле AURA Blocks"
-                    ></div>
-
-                    <div
-                        class="blocks-overlay"
-                        id="game-overlay"
+                    <button
+                        class="blocks-game-back"
+                        id="back-from-game"
+                        type="button"
+                        aria-label="Вернуться в приложение"
                     >
+                        <span aria-hidden="true">←</span>
+                        <b>НАЗАД</b>
+                    </button>
 
-                        <div class="game-overlay-code">
-                            AURA.SYSTEM / MINI GAME
+                    <div class="blocks-game-title">
+                        <small>MINI GAME // AURA</small>
+                        <strong>AURA BLOCKS</strong>
+                    </div>
+
+                    <button
+                        class="blocks-game-new"
+                        id="blocks-reset"
+                        type="button"
+                    >
+                        ЗАНОВО
+                    </button>
+
+                </header>
+
+
+                <main class="blocks-game-stage">
+
+                    <div class="blocks-hud">
+
+                        <div>
+                            <small>СЧЁТ</small>
+                            <strong id="game-score">0000</strong>
                         </div>
 
-                        <h3 id="game-overlay-title">
-                            ГОТОВ?
-                        </h3>
+                        <div>
+                            <small>РЕКОРД</small>
+                            <strong id="game-best">0000</strong>
+                        </div>
 
-                        <p id="game-overlay-text">
-                            Собирай линии, освобождай поле и попробуй
-                            поставить самый высокий рекорд.
-                        </p>
-
-                        <button
-                            class="game-start-button"
-                            id="game-start"
-                            type="button"
-                        >
-                            НАЧАТЬ ИГРУ
-                        </button>
+                        <div>
+                            <small>COMBO</small>
+                            <strong id="game-combo">x1</strong>
+                        </div>
 
                     </div>
 
+
+                    <div class="blocks-system-line">
+                        <span class="blocks-live-dot"></span>
+                        GRID // ONLINE
+                        <b id="blocks-status">ГОТОВО</b>
+                    </div>
+
+
+                    <div class="blocks-board-shell">
+
+                        <div
+                            class="blocks-board"
+                            id="blocks-board"
+                            role="grid"
+                            aria-label="Игровое поле AURA Blocks"
+                        ></div>
+
+                        <div
+                            class="blocks-particles-layer"
+                            id="blocks-particles"
+                            aria-hidden="true"
+                        ></div>
+
+                        <div
+                            class="blocks-overlay"
+                            id="game-overlay"
+                        >
+
+                            <div class="game-overlay-code">
+                                AURA.SYSTEM / MINI GAME
+                            </div>
+
+                            <h3 id="game-overlay-title">
+                                ГОТОВ?
+                            </h3>
+
+                            <p id="game-overlay-text">
+                                Перетаскивай фигуры на поле, собирай полные
+                                строки и столбцы и ставь новый рекорд.
+                            </p>
+
+                            <button
+                                class="game-start-button"
+                                id="game-start"
+                                type="button"
+                            >
+                                НАЧАТЬ ИГРУ
+                            </button>
+
+                        </div>
+
+                        <div
+                            class="blocks-toast"
+                            id="blocks-toast"
+                            aria-live="polite"
+                        ></div>
+
+                    </div>
+
+
+                    <div class="blocks-tray-head">
+                        <span>ПЕРЕТАЩИ ФИГУРУ НА ПОЛЕ</span>
+                        <small>ЗАЖМИ И ВЕДИ</small>
+                    </div>
+
                     <div
-                        class="blocks-toast"
-                        id="blocks-toast"
-                        aria-live="polite"
+                        class="blocks-tray"
+                        id="blocks-tray"
+                        aria-label="Доступные фигуры"
                     ></div>
 
-                </div>
+                    <p class="blocks-game-hint">
+                        Во время перетаскивания фигура поднимется над пальцем —
+                        подсветка на поле покажет, куда она встанет.
+                    </p>
 
+                    <div class="blocks-game-save">
+                        <span>HIGH SCORE // AUTO SAVE</span>
+                        <b>Рекорд сохраняется автоматически</b>
+                    </div>
 
-                <div class="blocks-tray-head">
-                    <span>ДОСТУПНЫЕ ФРАГМЕНТЫ</span>
-                    <small>ВЫБЕРИ ФИГУРУ</small>
-                </div>
-
-                <div
-                    class="blocks-tray"
-                    id="blocks-tray"
-                    aria-label="Доступные фигуры"
-                ></div>
-
-
-                <div class="blocks-help">
-                    <span>01</span>
-                    <p>Нажми на фигуру.</p>
-
-                    <span>02</span>
-                    <p>Нажми на свободное место на поле.</p>
-
-                    <span>03</span>
-                    <p>Полная строка или столбец исчезнет.</p>
-                </div>
-
-
-                <button
-                    class="blocks-reset"
-                    id="blocks-reset"
-                    type="button"
-                >
-                    НОВАЯ ИГРА
-                </button>
-
-            </section>
-
-
-            <div class="blocks-record-note">
-
-                <span>
-                    HIGH SCORE // LOCAL SAVE
-                </span>
-
-                <p>
-                    Твой рекорд сохраняется на этом устройстве.
-                    Сделай скрин результата — он ещё может пригодиться.
-                </p>
+                </main>
 
             </div>
-
-
-            <footer>
-
-                <span>
-                    AURA / MINI GAME
-                </span>
-
-                <span>
-                    HIGH SCORE MODE
-                </span>
-
-            </footer>
 
         </section>
 
@@ -1285,6 +1257,7 @@
     </main>
 
 
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="app.js"></script>
 
 </body>
