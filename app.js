@@ -278,6 +278,8 @@ if (openGameButton) {
         "click",
         () => {
 
+            enterAuraGameMode();
+
             showScreen(
                 gameScreen
             );
@@ -301,6 +303,7 @@ if (backFromGameButton) {
         () => {
 
             stopGame();
+            exitAuraGameMode();
 
             showScreen(
                 mainScreen
@@ -1534,6 +1537,9 @@ const blocksBoardElement =
 const blocksTrayElement =
     document.getElementById("blocks-tray");
 
+const blocksParticlesElement =
+    document.getElementById("blocks-particles");
+
 const gameScoreElement =
     document.getElementById("game-score");
 
@@ -1567,15 +1573,25 @@ const blocksResetButton =
 
 const BLOCKS_SIZE = 8;
 const BLOCKS_BEST_KEY = "aura-blocks-best-v1";
+const BLOCK_CLEAR_MS = 430;
+
+const BLOCK_COLORS = [
+    { id: "violet", value: "#9368ff" },
+    { id: "lilac", value: "#c4a9ff" },
+    { id: "indigo", value: "#6259b8" },
+    { id: "ice", value: "#e6e3ee" },
+    { id: "deep", value: "#7b49cf" }
+];
 
 let blocksBoard = [];
 let blocksPieces = [];
-let blocksSelectedPiece = null;
 let blocksScore = 0;
 let blocksBest = 0;
 let blocksCombo = 1;
 let blocksRunning = false;
+let blocksAnimating = false;
 let blocksToastTimer = null;
+let blocksDrag = null;
 
 
 const BLOCK_SHAPES = [
@@ -1623,8 +1639,49 @@ function blocksHaptic(type = "light") {
         }
     }
     catch (error) {
-        /* haptics are optional */
+        /* Haptics are optional. */
     }
+}
+
+
+function enterAuraGameMode() {
+    document.body.classList.add("aura-game-mode");
+
+    try {
+        const tg = window.Telegram && window.Telegram.WebApp;
+        if (!tg) return;
+
+        if (typeof tg.ready === "function") tg.ready();
+        if (typeof tg.expand === "function") tg.expand();
+        if (typeof tg.requestFullscreen === "function") {
+            try {
+                tg.requestFullscreen();
+            }
+            catch (fullscreenError) {
+                /* CSS fullscreen remains active as a fallback. */
+            }
+        }
+    }
+    catch (error) {
+        /* Browser fallback is intentional. */
+    }
+}
+
+
+function exitAuraGameMode() {
+    cancelBlocksDrag();
+    document.body.classList.remove("aura-game-mode");
+
+    try {
+        const tg = window.Telegram && window.Telegram.WebApp;
+        if (tg && typeof tg.exitFullscreen === "function") {
+            try {
+                tg.exitFullscreen();
+            }
+            catch (fullscreenError) {}
+        }
+    }
+    catch (error) {}
 }
 
 
@@ -1642,9 +1699,7 @@ function saveBlocksBest(value) {
     try {
         localStorage.setItem(BLOCKS_BEST_KEY, String(value));
     }
-    catch (error) {
-        /* local storage can be unavailable in private contexts */
-    }
+    catch (error) {}
 
     try {
         const cloud =
@@ -1656,9 +1711,7 @@ function saveBlocksBest(value) {
             cloud.setItem(BLOCKS_BEST_KEY, String(value), () => {});
         }
     }
-    catch (error) {
-        /* Telegram cloud storage is optional */
-    }
+    catch (error) {}
 }
 
 
@@ -1686,9 +1739,7 @@ function tryLoadCloudBest() {
             }
         });
     }
-    catch (error) {
-        /* optional */
-    }
+    catch (error) {}
 }
 
 
@@ -1700,7 +1751,7 @@ function formatBlocksScore(value) {
 function emptyBlocksBoard() {
     return Array.from(
         { length: BLOCKS_SIZE },
-        () => Array(BLOCKS_SIZE).fill(false)
+        () => Array(BLOCKS_SIZE).fill(null)
     );
 }
 
@@ -1733,10 +1784,16 @@ function randomShape() {
 }
 
 
+function randomBlockColor() {
+    return BLOCK_COLORS[Math.floor(Math.random() * BLOCK_COLORS.length)];
+}
+
+
 function newPiece(index) {
     return {
         id: `${Date.now()}-${index}-${Math.random()}`,
         shape: randomShape(),
+        color: randomBlockColor(),
         used: false
     };
 }
@@ -1744,7 +1801,6 @@ function newPiece(index) {
 
 function generateBlocksPieces() {
     blocksPieces = [0, 1, 2].map(newPiece);
-    blocksSelectedPiece = null;
     renderBlocksTray();
 }
 
@@ -1775,7 +1831,13 @@ function showBlocksToast(message, kind = "normal") {
 
     blocksToastTimer = setTimeout(() => {
         blocksToastElement.classList.remove("visible");
-    }, 900);
+    }, 1050);
+}
+
+
+function getBlockColorValue(colorId) {
+    const match = BLOCK_COLORS.find((item) => item.id === colorId);
+    return match ? match.value : BLOCK_COLORS[0].value;
 }
 
 
@@ -1786,25 +1848,20 @@ function renderBlocksBoard() {
 
     for (let row = 0; row < BLOCKS_SIZE; row++) {
         for (let col = 0; col < BLOCKS_SIZE; col++) {
-            const cell = document.createElement("button");
-            cell.type = "button";
+            const cell = document.createElement("div");
             cell.className = "blocks-cell";
             cell.dataset.row = String(row);
             cell.dataset.col = String(col);
             cell.setAttribute("role", "gridcell");
             cell.setAttribute("aria-label", `Строка ${row + 1}, столбец ${col + 1}`);
 
-            if (blocksBoard[row][col]) {
+            const value = blocksBoard[row][col];
+
+            if (value) {
                 cell.classList.add("filled");
+                cell.dataset.color = value.color;
+                cell.style.setProperty("--block-color", getBlockColorValue(value.color));
             }
-
-            cell.addEventListener("click", () => {
-                handleBlocksCellClick(row, col);
-            });
-
-            cell.addEventListener("pointerenter", () => {
-                previewBlocksPlacement(row, col);
-            });
 
             blocksBoardElement.appendChild(cell);
         }
@@ -1819,18 +1876,19 @@ function clearBlocksPreview() {
         .querySelectorAll(".preview-valid, .preview-invalid")
         .forEach((cell) => {
             cell.classList.remove("preview-valid", "preview-invalid");
+            cell.style.removeProperty("--preview-color");
         });
 }
 
 
-function previewBlocksPlacement(row, col) {
+function previewBlocksPlacement(piece, row, col) {
     clearBlocksPreview();
 
-    if (!blocksRunning || !blocksSelectedPiece) return;
+    if (!blocksRunning || blocksAnimating || !piece) return false;
 
-    const valid = canPlaceBlocksShape(blocksSelectedPiece.shape, row, col);
+    const valid = canPlaceBlocksShape(piece.shape, row, col);
 
-    blocksSelectedPiece.shape.forEach(([shapeRow, shapeCol]) => {
+    piece.shape.forEach(([shapeRow, shapeCol]) => {
         const targetRow = row + shapeRow;
         const targetCol = col + shapeCol;
 
@@ -1850,8 +1908,35 @@ function previewBlocksPlacement(row, col) {
 
         if (cell) {
             cell.classList.add(valid ? "preview-valid" : "preview-invalid");
+            cell.style.setProperty("--preview-color", piece.color.value);
         }
     });
+
+    return valid;
+}
+
+
+function buildPiecePreview(piece, className = "blocks-piece-grid") {
+    const { rows, cols } = shapeDimensions(piece.shape);
+    const preview = document.createElement("span");
+    preview.className = className;
+    preview.style.setProperty("--piece-rows", String(rows));
+    preview.style.setProperty("--piece-cols", String(cols));
+    preview.style.setProperty("--piece-color", piece.color.value);
+
+    for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+            const dot = document.createElement("i");
+            const active = piece.shape.some(
+                ([shapeRow, shapeCol]) => shapeRow === row && shapeCol === col
+            );
+
+            if (active) dot.classList.add("active");
+            preview.appendChild(dot);
+        }
+    }
+
+    return preview;
 }
 
 
@@ -1865,50 +1950,17 @@ function renderBlocksTray() {
         button.type = "button";
         button.className = "blocks-piece";
         button.dataset.pieceIndex = String(pieceIndex);
+        button.setAttribute("aria-label", "Перетащить фигуру на игровое поле");
 
         if (piece.used) {
             button.classList.add("used");
             button.disabled = true;
         }
 
-        if (blocksSelectedPiece === piece) {
-            button.classList.add("selected");
-        }
+        button.appendChild(buildPiecePreview(piece));
 
-        const { rows, cols } = shapeDimensions(piece.shape);
-        const preview = document.createElement("span");
-        preview.className = "blocks-piece-grid";
-        preview.style.setProperty("--piece-rows", String(rows));
-        preview.style.setProperty("--piece-cols", String(cols));
-
-        for (let row = 0; row < rows; row++) {
-            for (let col = 0; col < cols; col++) {
-                const dot = document.createElement("i");
-                const active = piece.shape.some(
-                    ([shapeRow, shapeCol]) => shapeRow === row && shapeCol === col
-                );
-
-                if (active) dot.classList.add("active");
-                preview.appendChild(dot);
-            }
-        }
-
-        button.appendChild(preview);
-
-        button.addEventListener("click", () => {
-            if (!blocksRunning || piece.used) return;
-
-            blocksSelectedPiece =
-                blocksSelectedPiece === piece
-                    ? null
-                    : piece;
-
-            clearBlocksPreview();
-            renderBlocksTray();
-
-            if (blocksSelectedPiece && blocksStatusElement) {
-                blocksStatusElement.textContent = "ВЫБЕРИ МЕСТО";
-            }
+        button.addEventListener("pointerdown", (event) => {
+            startBlocksDrag(event, piece, button);
         });
 
         blocksTrayElement.appendChild(button);
@@ -1935,9 +1987,7 @@ function canPlaceBlocksShape(shape, startRow, startCol) {
 function canShapeFitAnywhere(shape) {
     for (let row = 0; row < BLOCKS_SIZE; row++) {
         for (let col = 0; col < BLOCKS_SIZE; col++) {
-            if (canPlaceBlocksShape(shape, row, col)) {
-                return true;
-            }
+            if (canPlaceBlocksShape(shape, row, col)) return true;
         }
     }
 
@@ -1945,80 +1995,205 @@ function canShapeFitAnywhere(shape) {
 }
 
 
-function handleBlocksCellClick(row, col) {
-    if (!blocksRunning) return;
+function getBoardMetrics() {
+    if (!blocksBoardElement) return null;
 
-    if (!blocksSelectedPiece) {
-        showBlocksToast("СНАЧАЛА ВЫБЕРИ ФИГУРУ");
-        blocksHaptic("light");
-        return;
-    }
+    const cells = blocksBoardElement.querySelectorAll(".blocks-cell");
+    if (cells.length < 2) return null;
 
-    const piece = blocksSelectedPiece;
+    const first = cells[0].getBoundingClientRect();
+    const second = cells[1].getBoundingClientRect();
+    const ninth = cells[8] ? cells[8].getBoundingClientRect() : null;
 
-    if (!canPlaceBlocksShape(piece.shape, row, col)) {
-        showBlocksToast("ЗДЕСЬ НЕ ПОМЕЩАЕТСЯ", "error");
-        blocksHaptic("error");
-        return;
-    }
-
-    piece.shape.forEach(([shapeRow, shapeCol]) => {
-        blocksBoard[row + shapeRow][col + shapeCol] = true;
-    });
-
-    piece.used = true;
-    blocksSelectedPiece = null;
-
-    blocksScore += piece.shape.length * 10;
-
-    const cleared = clearCompletedBlocksLines();
-
-    if (cleared > 0) {
-        blocksScore += cleared * 100 * blocksCombo;
-
-        const label =
-            cleared > 1
-                ? `SYNC x${cleared} // +${cleared * 100 * blocksCombo}`
-                : `LINE SYNC // +${100 * blocksCombo}`;
-
-        showBlocksToast(label, "success");
-        blocksHaptic("success");
-        blocksCombo += 1;
-    }
-    else {
-        blocksCombo = 1;
-        blocksHaptic("light");
-    }
-
-    if (blocksScore > blocksBest) {
-        blocksBest = blocksScore;
-        saveBlocksBest(blocksBest);
-    }
-
-    if (blocksPieces.every((item) => item.used)) {
-        generateBlocksPieces();
-    }
-
-    renderBlocksBoard();
-    renderBlocksTray();
-    updateBlocksHud();
-
-    if (blocksStatusElement) {
-        blocksStatusElement.textContent = "ONLINE";
-    }
-
-    checkBlocksGameOver();
+    return {
+        first,
+        cellWidth: first.width,
+        cellHeight: first.height,
+        stepX: second.left - first.left,
+        stepY: ninth ? ninth.top - first.top : first.height,
+        boardRect: blocksBoardElement.getBoundingClientRect()
+    };
 }
 
 
-function clearCompletedBlocksLines() {
-    const fullRows = [];
-    const fullCols = [];
+function createBlocksDragGhost(piece, pointerType) {
+    const metrics = getBoardMetrics();
+    if (!metrics) return null;
+
+    const { rows, cols } = shapeDimensions(piece.shape);
+    const ghost = document.createElement("div");
+    ghost.className = "blocks-drag-ghost";
+    ghost.style.setProperty("--drag-cell-w", `${metrics.cellWidth}px`);
+    ghost.style.setProperty("--drag-cell-h", `${metrics.cellHeight}px`);
+    ghost.style.setProperty("--drag-gap-x", `${Math.max(0, metrics.stepX - metrics.cellWidth)}px`);
+    ghost.style.setProperty("--drag-gap-y", `${Math.max(0, metrics.stepY - metrics.cellHeight)}px`);
+    ghost.style.setProperty("--piece-rows", String(rows));
+    ghost.style.setProperty("--piece-cols", String(cols));
+    ghost.style.setProperty("--piece-color", piece.color.value);
+    ghost.dataset.pointerType = pointerType || "mouse";
+
+    for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+            const dot = document.createElement("i");
+            const active = piece.shape.some(
+                ([shapeRow, shapeCol]) => shapeRow === row && shapeCol === col
+            );
+            if (active) dot.classList.add("active");
+            ghost.appendChild(dot);
+        }
+    }
+
+    document.body.appendChild(ghost);
+    return ghost;
+}
+
+
+function positionBlocksDragGhost(clientX, clientY) {
+    if (!blocksDrag || !blocksDrag.ghost) return;
+
+    const ghost = blocksDrag.ghost;
+    const width = ghost.offsetWidth;
+    const height = ghost.offsetHeight;
+    const isTouch = blocksDrag.pointerType === "touch" || blocksDrag.pointerType === "pen";
+
+    const left = clientX - width / 2;
+    const top = isTouch
+        ? clientY - height - 54
+        : clientY - height / 2;
+
+    ghost.style.transform = `translate3d(${left}px, ${top}px, 0)`;
+
+    const metrics = getBoardMetrics();
+    if (!metrics) return;
+
+    const startCol = Math.round((left - metrics.first.left) / metrics.stepX);
+    const startRow = Math.round((top - metrics.first.top) / metrics.stepY);
+
+    const ghostRight = left + width;
+    const ghostBottom = top + height;
+    const nearBoard = !(
+        ghostRight < metrics.boardRect.left - metrics.stepX ||
+        left > metrics.boardRect.right + metrics.stepX ||
+        ghostBottom < metrics.boardRect.top - metrics.stepY ||
+        top > metrics.boardRect.bottom + metrics.stepY
+    );
+
+    blocksDrag.row = startRow;
+    blocksDrag.col = startCol;
+    blocksDrag.overBoard = nearBoard;
+    blocksDrag.valid = nearBoard && previewBlocksPlacement(blocksDrag.piece, startRow, startCol);
+
+    ghost.classList.toggle("valid", blocksDrag.valid);
+    ghost.classList.toggle("invalid", nearBoard && !blocksDrag.valid);
+}
+
+
+function startBlocksDrag(event, piece, sourceButton) {
+    if (!blocksRunning || blocksAnimating || piece.used) return;
+    if (event.button !== undefined && event.button !== 0) return;
+
+    event.preventDefault();
+    cancelBlocksDrag();
+
+    const ghost = createBlocksDragGhost(piece, event.pointerType);
+    if (!ghost) return;
+
+    blocksDrag = {
+        pointerId: event.pointerId,
+        pointerType: event.pointerType || "mouse",
+        piece,
+        sourceButton,
+        ghost,
+        row: null,
+        col: null,
+        valid: false,
+        overBoard: false
+    };
+
+    sourceButton.classList.add("dragging");
+    if (blocksStatusElement) blocksStatusElement.textContent = "ПЕРЕМЕЩЕНИЕ";
+
+    positionBlocksDragGhost(event.clientX, event.clientY);
+
+    window.addEventListener("pointermove", handleBlocksDragMove, { passive: false });
+    window.addEventListener("pointerup", handleBlocksDragEnd, { passive: false });
+    window.addEventListener("pointercancel", handleBlocksDragCancel, { passive: false });
+
+    blocksHaptic("light");
+}
+
+
+function handleBlocksDragMove(event) {
+    if (!blocksDrag || event.pointerId !== blocksDrag.pointerId) return;
+    event.preventDefault();
+    positionBlocksDragGhost(event.clientX, event.clientY);
+}
+
+
+function removeBlocksDragListeners() {
+    window.removeEventListener("pointermove", handleBlocksDragMove);
+    window.removeEventListener("pointerup", handleBlocksDragEnd);
+    window.removeEventListener("pointercancel", handleBlocksDragCancel);
+}
+
+
+function cancelBlocksDrag() {
+    removeBlocksDragListeners();
+    clearBlocksPreview();
+
+    if (!blocksDrag) return;
+
+    if (blocksDrag.sourceButton) {
+        blocksDrag.sourceButton.classList.remove("dragging");
+    }
+
+    if (blocksDrag.ghost && blocksDrag.ghost.parentNode) {
+        blocksDrag.ghost.parentNode.removeChild(blocksDrag.ghost);
+    }
+
+    blocksDrag = null;
+}
+
+
+async function handleBlocksDragEnd(event) {
+    if (!blocksDrag || event.pointerId !== blocksDrag.pointerId) return;
+    event.preventDefault();
+
+    const drag = blocksDrag;
+    const canDrop = drag.valid && drag.overBoard;
+    const row = drag.row;
+    const col = drag.col;
+    const piece = drag.piece;
+    const wasOverBoard = drag.overBoard;
+
+    cancelBlocksDrag();
+
+    if (canDrop) {
+        await commitBlocksPiece(piece, row, col);
+    }
+    else if (wasOverBoard) {
+        showBlocksToast("ЗДЕСЬ НЕ ПОМЕЩАЕТСЯ", "error");
+        blocksHaptic("error");
+    }
+    else if (blocksStatusElement) {
+        blocksStatusElement.textContent = "ONLINE";
+    }
+}
+
+
+function handleBlocksDragCancel(event) {
+    if (!blocksDrag || event.pointerId !== blocksDrag.pointerId) return;
+    cancelBlocksDrag();
+    if (blocksStatusElement) blocksStatusElement.textContent = "ONLINE";
+}
+
+
+function findCompletedBlocksLines() {
+    const rows = [];
+    const cols = [];
 
     for (let row = 0; row < BLOCKS_SIZE; row++) {
-        if (blocksBoard[row].every(Boolean)) {
-            fullRows.push(row);
-        }
+        if (blocksBoard[row].every(Boolean)) rows.push(row);
     }
 
     for (let col = 0; col < BLOCKS_SIZE; col++) {
@@ -2031,33 +2206,175 @@ function clearCompletedBlocksLines() {
             }
         }
 
-        if (complete) fullCols.push(col);
+        if (complete) cols.push(col);
     }
 
-    fullRows.forEach((row) => {
+    return { rows, cols };
+}
+
+
+function getClearingCells(rows, cols) {
+    if (!blocksBoardElement) return [];
+
+    const keys = new Set();
+    rows.forEach((row) => {
+        for (let col = 0; col < BLOCKS_SIZE; col++) keys.add(`${row}:${col}`);
+    });
+    cols.forEach((col) => {
+        for (let row = 0; row < BLOCKS_SIZE; row++) keys.add(`${row}:${col}`);
+    });
+
+    return [...keys]
+        .map((key) => {
+            const [row, col] = key.split(":");
+            return blocksBoardElement.querySelector(
+                `.blocks-cell[data-row="${row}"][data-col="${col}"]`
+            );
+        })
+        .filter(Boolean);
+}
+
+
+function emitBlocksParticles(cells) {
+    if (!blocksParticlesElement || !cells.length) return;
+
+    const layerRect = blocksParticlesElement.getBoundingClientRect();
+
+    cells.forEach((cell, cellIndex) => {
+        const rect = cell.getBoundingClientRect();
+        const color = cell.style.getPropertyValue("--block-color") || "#9368ff";
+        const centerX = rect.left - layerRect.left + rect.width / 2;
+        const centerY = rect.top - layerRect.top + rect.height / 2;
+
+        for (let i = 0; i < 3; i++) {
+            const particle = document.createElement("i");
+            particle.className = "blocks-particle";
+            particle.style.left = `${centerX}px`;
+            particle.style.top = `${centerY}px`;
+            particle.style.setProperty("--particle-color", color);
+
+            const angle = ((cellIndex * 47 + i * 119) % 360) * Math.PI / 180;
+            const distance = 18 + ((cellIndex + i * 7) % 24);
+            particle.style.setProperty("--dx", `${Math.cos(angle) * distance}px`);
+            particle.style.setProperty("--dy", `${Math.sin(angle) * distance}px`);
+            particle.style.setProperty("--delay", `${(i * 18) + (cellIndex % 4) * 10}ms`);
+
+            blocksParticlesElement.appendChild(particle);
+            setTimeout(() => particle.remove(), 650);
+        }
+    });
+}
+
+
+function waitBlocks(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+
+async function animateAndClearBlocksLines(rows, cols) {
+    const cells = getClearingCells(rows, cols);
+    cells.forEach((cell, index) => {
+        cell.classList.add("line-clearing");
+        cell.style.setProperty("--clear-delay", `${(index % 8) * 14}ms`);
+    });
+
+    emitBlocksParticles(cells);
+    await waitBlocks(BLOCK_CLEAR_MS);
+
+    rows.forEach((row) => {
         for (let col = 0; col < BLOCKS_SIZE; col++) {
-            blocksBoard[row][col] = false;
+            blocksBoard[row][col] = null;
         }
     });
 
-    fullCols.forEach((col) => {
+    cols.forEach((col) => {
         for (let row = 0; row < BLOCKS_SIZE; row++) {
-            blocksBoard[row][col] = false;
+            blocksBoard[row][col] = null;
         }
     });
+}
 
-    return fullRows.length + fullCols.length;
+
+async function commitBlocksPiece(piece, row, col) {
+    if (!blocksRunning || blocksAnimating || piece.used) return;
+
+    if (!canPlaceBlocksShape(piece.shape, row, col)) {
+        showBlocksToast("ЗДЕСЬ НЕ ПОМЕЩАЕТСЯ", "error");
+        blocksHaptic("error");
+        return;
+    }
+
+    piece.shape.forEach(([shapeRow, shapeCol]) => {
+        blocksBoard[row + shapeRow][col + shapeCol] = {
+            color: piece.color.id
+        };
+    });
+
+    piece.used = true;
+    blocksScore += piece.shape.length * 10;
+
+    renderBlocksBoard();
+    renderBlocksTray();
+    updateBlocksHud();
+    blocksHaptic("light");
+
+    const completed = findCompletedBlocksLines();
+    const cleared = completed.rows.length + completed.cols.length;
+
+    if (cleared > 0) {
+        blocksAnimating = true;
+        if (blocksStatusElement) blocksStatusElement.textContent = "SYNC";
+
+        const bonus = cleared * 100 * blocksCombo;
+        blocksScore += bonus;
+
+        const label =
+            cleared > 1
+                ? `SYNC x${cleared} // +${bonus}`
+                : `LINE SYNC // +${bonus}`;
+
+        showBlocksToast(label, "success");
+        blocksHaptic("success");
+        updateBlocksHud();
+
+        await animateAndClearBlocksLines(completed.rows, completed.cols);
+        blocksCombo += 1;
+        blocksAnimating = false;
+        renderBlocksBoard();
+    }
+    else {
+        blocksCombo = 1;
+    }
+
+    if (blocksScore > blocksBest) {
+        blocksBest = blocksScore;
+        saveBlocksBest(blocksBest);
+    }
+
+    if (blocksPieces.every((item) => item.used)) {
+        generateBlocksPieces();
+    }
+    else {
+        renderBlocksTray();
+    }
+
+    updateBlocksHud();
+
+    if (blocksStatusElement) {
+        blocksStatusElement.textContent = "ONLINE";
+    }
+
+    checkBlocksGameOver();
 }
 
 
 function checkBlocksGameOver() {
-    const remaining = blocksPieces.filter((piece) => !piece.used);
+    if (!blocksRunning || blocksAnimating) return;
 
+    const remaining = blocksPieces.filter((piece) => !piece.used);
     const anyFits = remaining.some((piece) => canShapeFitAnywhere(piece.shape));
 
-    if (!anyFits) {
-        finishAuraBlocks();
-    }
+    if (!anyFits) finishAuraBlocks();
 }
 
 
@@ -2075,10 +2392,12 @@ function hideBlocksOverlay() {
 
 
 function startAuraBlocks() {
+    cancelBlocksDrag();
     blocksBoard = emptyBlocksBoard();
     blocksScore = 0;
     blocksCombo = 1;
     blocksRunning = true;
+    blocksAnimating = false;
 
     generateBlocksPieces();
     renderBlocksBoard();
@@ -2095,7 +2414,10 @@ function startAuraBlocks() {
 
 
 function finishAuraBlocks() {
+    cancelBlocksDrag();
     blocksRunning = false;
+
+    const previousBest = blocksBest;
 
     if (blocksScore > blocksBest) {
         blocksBest = blocksScore;
@@ -2105,7 +2427,7 @@ function finishAuraBlocks() {
     updateBlocksHud();
 
     showBlocksOverlay(
-        blocksScore >= blocksBest && blocksScore > 0
+        blocksScore > previousBest && blocksScore > 0
             ? "NEW HIGH SCORE"
             : "GRID OVERLOAD",
         `СЧЁТ ${formatBlocksScore(blocksScore)} // РЕКОРД ${formatBlocksScore(blocksBest)}`,
@@ -2120,7 +2442,7 @@ function finishAuraBlocks() {
 }
 
 
-/* Compatibility with the old navigation code. */
+/* Compatibility with the existing navigation code. */
 function resizeGameCanvas() {
     renderBlocksBoard();
     renderBlocksTray();
@@ -2129,7 +2451,7 @@ function resizeGameCanvas() {
 
 
 function stopGame() {
-    /* AURA Blocks is turn-based, so there is no animation loop to stop. */
+    cancelBlocksDrag();
 }
 
 
@@ -2140,6 +2462,7 @@ if (gameStartButton) {
 
 if (blocksResetButton) {
     blocksResetButton.addEventListener("click", () => {
+        cancelBlocksDrag();
         showBlocksOverlay(
             "НОВАЯ ИГРА?",
             "Текущий результат будет сброшен. Рекорд сохранится.",
@@ -2147,11 +2470,6 @@ if (blocksResetButton) {
         );
         blocksRunning = false;
     });
-}
-
-
-if (blocksBoardElement) {
-    blocksBoardElement.addEventListener("pointerleave", clearBlocksPreview);
 }
 
 
