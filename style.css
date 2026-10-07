@@ -4509,6 +4509,7 @@ body.aura-game-mode .decor-layer {
     width: 100%;
     height: 100%;
     min-height: 0;
+    box-sizing: border-box;
     /* Telegram fullscreen can place its own controls over the webview.
        content-safe-area keeps our game controls below Telegram UI;
        env(safe-area-*) remains as a fallback for normal mobile browsers. */
@@ -4517,7 +4518,8 @@ body.aura-game-mode .decor-layer {
             10px,
             env(safe-area-inset-top, 0px),
             var(--tg-safe-area-inset-top, 0px),
-            var(--tg-content-safe-area-inset-top, 0px)
+            var(--tg-content-safe-area-inset-top, 0px),
+            var(--aura-telegram-top-inset, 0px)
         ) + 8px
     );
     padding-right: max(
