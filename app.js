@@ -1648,6 +1648,89 @@ function blocksHaptic(type = "light") {
 }
 
 
+let auraTelegramGameEventsBound = false;
+
+
+function isAuraTelegramMobile() {
+    try {
+        const tg = window.Telegram && window.Telegram.WebApp;
+        const platform = String((tg && tg.platform) || "").toLowerCase();
+        const userAgent = String(navigator.userAgent || "").toLowerCase();
+
+        return (
+            platform === "ios" ||
+            platform === "android" ||
+            /iphone|ipad|ipod|android/.test(userAgent)
+        );
+    }
+    catch (error) {
+        return false;
+    }
+}
+
+
+function syncAuraTelegramSafeArea() {
+    try {
+        const tg = window.Telegram && window.Telegram.WebApp;
+        if (!tg) return;
+
+        const contentInset = tg.contentSafeAreaInset || {};
+        const safeInset = tg.safeAreaInset || {};
+
+        let top = Math.max(
+            Number(contentInset.top) || 0,
+            Number(safeInset.top) || 0
+        );
+
+        /*
+         * Some Telegram iOS builds can report 0 for the content-safe-area
+         * immediately after switching fullscreen state. If fullscreen is
+         * nevertheless active, keep our controls below Telegram's overlay.
+         */
+        if (isAuraTelegramMobile() && tg.isFullscreen) {
+            top = Math.max(top, 72);
+        }
+
+        document.documentElement.style.setProperty(
+            "--aura-telegram-top-inset",
+            `${Math.round(top)}px`
+        );
+    }
+    catch (error) {
+        document.documentElement.style.setProperty(
+            "--aura-telegram-top-inset",
+            "0px"
+        );
+    }
+}
+
+
+function bindAuraTelegramGameEvents() {
+    if (auraTelegramGameEventsBound) return;
+
+    try {
+        const tg = window.Telegram && window.Telegram.WebApp;
+        if (!tg || typeof tg.onEvent !== "function") return;
+
+        const sync = () => {
+            syncAuraTelegramSafeArea();
+            window.setTimeout(syncAuraTelegramSafeArea, 80);
+            window.setTimeout(syncAuraTelegramSafeArea, 250);
+        };
+
+        tg.onEvent("contentSafeAreaChanged", sync);
+        tg.onEvent("safeAreaChanged", sync);
+        tg.onEvent("fullscreenChanged", sync);
+        tg.onEvent("viewportChanged", sync);
+
+        auraTelegramGameEventsBound = true;
+    }
+    catch (error) {
+        /* Telegram events are optional. */
+    }
+}
+
+
 function enterAuraGameMode() {
     document.body.classList.add("aura-game-mode");
 
@@ -1657,7 +1740,30 @@ function enterAuraGameMode() {
 
         if (typeof tg.ready === "function") tg.ready();
         if (typeof tg.expand === "function") tg.expand();
-        if (typeof tg.requestFullscreen === "function") {
+
+        bindAuraTelegramGameEvents();
+
+        /*
+         * IMPORTANT:
+         * On phones we intentionally DO NOT request Telegram's native
+         * fullscreen. The game still fills the entire Mini App viewport,
+         * but Telegram keeps its own header outside our clickable area.
+         * This avoids the iPhone overlay shown over the back/restart buttons.
+         */
+        if (isAuraTelegramMobile()) {
+            if (tg.isFullscreen && typeof tg.exitFullscreen === "function") {
+                try {
+                    tg.exitFullscreen();
+                }
+                catch (fullscreenError) {}
+            }
+
+            document.documentElement.style.setProperty(
+                "--aura-telegram-top-inset",
+                "0px"
+            );
+        }
+        else if (typeof tg.requestFullscreen === "function") {
             try {
                 tg.requestFullscreen();
             }
@@ -1665,6 +1771,11 @@ function enterAuraGameMode() {
                 /* CSS fullscreen remains active as a fallback. */
             }
         }
+
+        syncAuraTelegramSafeArea();
+        window.setTimeout(syncAuraTelegramSafeArea, 80);
+        window.setTimeout(syncAuraTelegramSafeArea, 250);
+        window.setTimeout(syncAuraTelegramSafeArea, 600);
     }
     catch (error) {
         /* Browser fallback is intentional. */
@@ -1675,10 +1786,14 @@ function enterAuraGameMode() {
 function exitAuraGameMode() {
     cancelBlocksDrag();
     document.body.classList.remove("aura-game-mode");
+    document.documentElement.style.setProperty(
+        "--aura-telegram-top-inset",
+        "0px"
+    );
 
     try {
         const tg = window.Telegram && window.Telegram.WebApp;
-        if (tg && typeof tg.exitFullscreen === "function") {
+        if (tg && typeof tg.exitFullscreen === "function" && tg.isFullscreen) {
             try {
                 tg.exitFullscreen();
             }
