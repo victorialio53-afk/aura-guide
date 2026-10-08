@@ -19,7 +19,7 @@ const auriMessages = [
 
     "Задание 1 «Брейншторм» уже доступно. Дедлайн — 11 октября, 23:59.",
 
-    "База кураторов подключена. Найди свою команду и открой профиль проводника.",
+    "База кураторов подключена. Найди свою команду и открой профили кураторов.",
 
     "Ты можешь открыть мою 3D-модель и рассмотреть меня поближе."
 
@@ -526,6 +526,18 @@ const curatorTeams = [
                 "message": "Будьте собой, а Студсовет будет рядом, чтобы поддержать!",
                 "missing": false,
                 "photo": "assets/curator-efanova_darya.webp"
+            },
+            {
+                "slot": 3,
+                "name": "Головин Тимур",
+                "role": [
+                    "Заместитель Председателя СК ФФ",
+                    "Заместитель руководителя по работе с менти «ProMentor RUDN»"
+                ],
+                "strength": "ПИСАТЬ В ЛИЧКИ",
+                "message": "После победы мы сделаем сальто",
+                "missing": false,
+                "photo": "assets/curator-golovin_timur.webp"
             }
         ]
     },
@@ -1022,12 +1034,15 @@ function renderCurators() {
                                 </span>
 
                                 <small>
-                                    CURATOR PAIR
+                                    CURATORS // ${team.curators.length}
                                 </small>
 
                             </div>
 
-                            <div class="curator-pair-members">
+                            <div
+                                class="curator-pair-members"
+                                data-count="${team.curators.length}"
+                            >
                                 ${members}
                             </div>
 
