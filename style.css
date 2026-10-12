@@ -2730,6 +2730,84 @@ footer {
 }
 
 
+
+.task-card-done {
+    padding: 15px 18px;
+    border-color: rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.025);
+    opacity: 0.62;
+}
+
+.task-card-done .task-card-top {
+    margin-bottom: 8px;
+    color: #888890;
+}
+
+.task-card-done h4 {
+    margin-bottom: 12px;
+    color: #aaaab1;
+    font-size: 20px;
+}
+
+.task-card-done .task-complete {
+    margin-top: 0;
+    border-color: rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.02);
+    color: #8e8e96;
+}
+
+.task-card-main {
+    margin-top: 14px;
+}
+
+.task-copy-block {
+    display: grid;
+    gap: 8px;
+}
+
+.task-copy-block > span {
+    color: var(--accent);
+    font-size: 9px;
+    letter-spacing: 0.16em;
+}
+
+.task-copy-block p {
+    color: #b5b5bb;
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.task-specs {
+    display: grid;
+    gap: 7px;
+    margin-top: 18px;
+}
+
+.task-spec-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 12px;
+    border: 1px solid rgba(255,255,255,0.09);
+    background: rgba(255,255,255,0.015);
+}
+
+.task-spec-row span {
+    color: #8e8e96;
+    font-size: 9px;
+    letter-spacing: 0.13em;
+}
+
+.task-spec-row strong {
+    flex: 0 0 auto;
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+}
+
+
 /* ================================================== */
 /* CURATORS */
 /* ================================================== */
@@ -3670,6 +3748,19 @@ body.curator-modal-open {
     .task-card h4 {
         font-size:
             22px;
+    }
+
+    .task-spec-row {
+        gap:
+            10px;
+    }
+
+    .task-spec-row span {
+        max-width:
+            calc(100% - 64px);
+
+        line-height:
+            1.35;
     }
 
     .curators-status-panel {
