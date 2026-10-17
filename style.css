@@ -2760,6 +2760,54 @@ footer {
     margin-top: 14px;
 }
 
+.task-card-final {
+    position: relative;
+    overflow: hidden;
+    border-color: rgba(126, 76, 226, 0.58);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(108,58,199,0.15),
+            rgba(255,255,255,0.018) 54%,
+            rgba(108,58,199,0.06)
+        );
+}
+
+.task-card-final::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--accent);
+    opacity: 0.8;
+}
+
+.task-kicker {
+    margin-top: -7px;
+    margin-bottom: 18px;
+    color: #777780;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+}
+
+.task-card-final .task-steps {
+    margin-top: 18px;
+    padding: 14px 14px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.015);
+}
+
+.task-card-final .task-warning {
+    margin-top: 11px;
+    color: #9d9da5;
+}
+
+.task-card-final .task-warning strong {
+    color: #c2a8f4;
+}
+
 .task-copy-block {
     display: grid;
     gap: 8px;
